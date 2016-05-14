@@ -1,4 +1,4 @@
-cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
+cgictrl ver.0.3 2012.12.18 Masahiko Ito <m-ito@myh.no-ip.org>
 =============================================================
 
 Copyright (C) 2009 Masahiko Ito
@@ -109,7 +109,7 @@ o パッケージをpublic_html以下の適当なディレクトリに展開す�
 o データ用ディレクトリを作成する(後述する cgictrl_common.cgi
   中のパラメータ @cgictrl_data_dir で場所を指定できる)。
 
-  - tar xvzf cgictrl-0.2.tar.gz
+  - tar xvzf cgictrl-0.3.tar.gz
 
   - mkdir ~/cgictrl
   - mkdir ~/cgictrl/html
@@ -124,9 +124,9 @@ o データ用ディレクトリを作成する(後述する cgictrl_common.cgi
   - chmod ???? ~/cgictrl/lock ~/cgictrl/log ~/cgictrl/spa ~/cgictrl/tmp
     httpサーバの権限で更新できるように設定する。
 
-  - cp cgictrl-0.2/cgi-bin/* ~/public_html/cgi-bin/
-  - cp cgictrl-0.2/cgictrl/*.txt ~/cgictrl/
-  - cp cgictrl-0.2/cgictrl/html/* ~/cgictrl/html/
+  - cp cgictrl-0.3/cgi-bin/* ~/public_html/cgi-bin/
+  - cp cgictrl-0.3/cgictrl/*.txt ~/cgictrl/
+  - cp cgictrl-0.3/cgictrl/html/* ~/cgictrl/html/
 
   - vi ~/public_html/cgi-bin/cgictrl_common.rb
     @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"

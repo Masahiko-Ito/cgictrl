@@ -20,7 +20,7 @@
 # "Masahiko Ito" <m-ito@myh.no-ip.org>
 #----------------------------------------------------------------------
 #
-# cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
+# cgictrl by Masahiko Ito <m-ito@myh.no-ip.org>
 #
 #   Cgictrl class 定義
 #

@@ -20,7 +20,7 @@
 # "Masahiko Ito" <m-ito@myh.no-ip.org>
 #----------------------------------------------------------------------
 #
-# CSV操作クラス Ver 0.2 2012.12.17 by Masahiko Ito <m-ito@myh.no-ip.org>
+# CSV操作クラス by Masahiko Ito <m-ito@myh.no-ip.org>
 #
 # このクラスで扱うCSVファイルは以下の形式である。イメージとしては数百件から
 # 数千件程度のデータを扱うものとする。

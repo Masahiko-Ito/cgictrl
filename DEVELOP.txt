@@ -1,4 +1,4 @@
-cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
+cgictrl by Masahiko Ito <m-ito@myh.no-ip.org>
 
 $$ 開発の手引 $$
 
@@ -8,7 +8,7 @@ $$ 開発の手引 $$
 インストール
 ============
 
-  o tar xvzf cgictrl-0.2.tar.gz
+  o tar xvzf cgictrl-0.3.tar.gz
 
   o mkdir ~/cgictrl
   o mkdir ~/cgictrl/html
@@ -23,9 +23,9 @@ $$ 開発の手引 $$
   o chmod ???? ~/cgictrl/lock ~/cgictrl/log ~/cgictrl/spa ~/cgictrl/tmp
     httpサーバの権限で更新できるように設定する。
 
-  o cp cgictrl-0.2/cgi-bin/* ~/public_html/cgi-bin/
-  o cp cgictrl-0.2/cgictrl/*.txt ~/cgictrl/
-  o cp cgictrl-0.2/cgictrl/html/* ~/cgictrl/html/
+  o cp cgictrl-0.3/cgi-bin/* ~/public_html/cgi-bin/
+  o cp cgictrl-0.3/cgictrl/*.txt ~/cgictrl/
+  o cp cgictrl-0.3/cgictrl/html/* ~/cgictrl/html/
 
   o vi ~/public_html/cgi-bin/cgictrl_common.cgi
     @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"
@@ -288,7 +288,7 @@ samp_calc_entry.cgi(半径の入力を受け付けるCGI)を作成する。
 
     1  #! /usr/bin/ruby
     2  #
-    3  # cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
+    3  # cgictrl by Masahiko Ito <m-ito@myh.no-ip.org>
     4  #
     5  #   ユーザコーディングサンプルスクリプト
     6  #
@@ -439,7 +439,7 @@ samp_calc_result.cgi(面積、体積を計算し表示するCGI)を作成する�
 
    1  #! /usr/bin/ruby
    2  #
-   3  # cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
+   3  # cgictrl by Masahiko Ito <m-ito@myh.no-ip.org>
    4  #
    5  #   ユーザコーディングサンプルスクリプト
    6  #

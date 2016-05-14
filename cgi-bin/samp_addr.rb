@@ -1,6 +1,6 @@
 # coding: utf-8
 #
-# サンプルクラス Ver 0.2 2012.12.17 by Masahiko Ito <m-ito@myh.no-ip.org>
+# サンプルクラス by Masahiko Ito <m-ito@myh.no-ip.org>
 #
 #======================================================================
 # 氏名クラス
