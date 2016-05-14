@@ -8,7 +8,7 @@ $$ 開発の手引 $$
 インストール
 ============
 
-  o tar xvzf cgictrl-0.3.tar.gz
+  o tar xvzf cgictrl-0.4.tar.gz
 
   o mkdir ~/cgictrl
   o mkdir ~/cgictrl/html
@@ -23,9 +23,9 @@ $$ 開発の手引 $$
   o chmod ???? ~/cgictrl/lock ~/cgictrl/log ~/cgictrl/spa ~/cgictrl/tmp
     httpサーバの権限で更新できるように設定する。
 
-  o cp cgictrl-0.3/cgi-bin/* ~/public_html/cgi-bin/
-  o cp cgictrl-0.3/cgictrl/*.txt ~/cgictrl/
-  o cp cgictrl-0.3/cgictrl/html/* ~/cgictrl/html/
+  o cp cgictrl-0.4/cgi-bin/* ~/public_html/cgi-bin/
+  o cp cgictrl-0.4/cgictrl/*.txt ~/cgictrl/
+  o cp cgictrl-0.4/cgictrl/html/* ~/cgictrl/html/
 
   o vi ~/public_html/cgi-bin/cgictrl_common.cgi
     @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"
