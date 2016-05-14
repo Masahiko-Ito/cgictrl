@@ -1,8 +1,9 @@
 #! /usr/bin/ruby
+# coding: utf-8
 #
-# cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+# cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
 #
-#   ¥æ¡¼¥¶¥³¡¼¥Ç¥£¥ó¥°¥µ¥ó¥×¥ë¥¹¥¯¥ê¥×¥È
+#   ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã‚µãƒ³ãƒ—ãƒ«ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
 #
 require "cgi"
 require "uri"
@@ -14,7 +15,7 @@ require "csvutil"
 $csv = ""
 #--- user coding end   ---
 #
-# ¥á¥¤¥ó½èÍı
+# ãƒ¡ã‚¤ãƒ³å‡¦ç†
 #
 def main()
 	cc = Cgictrl.new
@@ -30,9 +31,9 @@ def main()
 	exit 0
 end
 #
-# ¥ª¡¼¥×¥ó½èÍı
+# ã‚ªãƒ¼ãƒ—ãƒ³å‡¦ç†
 #
-#    o DBÀÜÂ³ etc
+#    o DBæ¥ç¶š etc
 #
 def sub_open(cc)
 #--- user coding start ---
@@ -40,10 +41,10 @@ def sub_open(cc)
 #--- user coding end   ---
 end
 #
-# ²èÌÌÊÔ½¸½èÍı
+# ç”»é¢ç·¨é›†å‡¦ç†
 #
-#   o spa¤Ë¤è¤êÅÏ¤µ¤ì¤¿¥Ç¡¼¥¿(cc.get_spa("...."))¤ò¸µ¤Ë²èÌÌ¤òÊÔ½¸¤¹¤ë
-#   o ¼¡¤Ëµ¯Æ°¤¹¤ë¥È¥é¥ó¥¶¥¯¥·¥ç¥ó(ÄÌ¾ï¤Ï¼«¥È¥é¥ó¥¶¥¯¥·¥ç¥ó¤ÈÆ±¤¸)¤òÊÖ¤¹
+#   o spaã«ã‚ˆã‚Šæ¸¡ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿(cc.get_spa("...."))ã‚’å…ƒã«ç”»é¢ã‚’ç·¨é›†ã™ã‚‹
+#   o æ¬¡ã«èµ·å‹•ã™ã‚‹ãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³(é€šå¸¸ã¯è‡ªãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³ã¨åŒã˜)ã‚’è¿”ã™
 #
 def sub_send(cc)
 #--- user coding start ---
@@ -64,22 +65,22 @@ def sub_send(cc)
 			if (cc.get_spa("err_sw") == "ER_#{number}_NAME")
 				html_param["name_color"] = "red"
 				if (msg == "")
-					msg = "»áÌ¾¤òÆşÎÏ¤·Ä¾¤·¤Æ²¼¤µ¤¤"
+					msg = "æ°åã‚’å…¥åŠ›ã—ç›´ã—ã¦ä¸‹ã•ã„"
 				end
 			elsif (cc.get_spa("err_sw") == "ER_#{number}_ZIPCODE")
 				html_param["zipcode_color"] = "red"
 				if (msg == "")
-					msg = "Í¹ÊØÈÖ¹æ(999 Ëô¤Ï 999-9999)¤òÆşÎÏ¤·Ä¾¤·¤Æ²¼¤µ¤¤"
+					msg = "éƒµä¾¿ç•ªå·(999 åˆã¯ 999-9999)ã‚’å…¥åŠ›ã—ç›´ã—ã¦ä¸‹ã•ã„"
 				end
 			elsif (cc.get_spa("err_sw") == "ER_#{number}_ADDRESS")
 				html_param["address_color"] = "red"
 				if (msg == "")
-					msg = "½»½ê¤òÆşÎÏ¤·Ä¾¤·¤Æ²¼¤µ¤¤"
+					msg = "ä½æ‰€ã‚’å…¥åŠ›ã—ç›´ã—ã¦ä¸‹ã•ã„"
 				end
 			elsif (cc.get_spa("err_sw") == "ER_#{number}_BIRTHDAY")
 				html_param["birthday_color"] = "red"
 				if (msg == "")
-					msg = "ÃÂÀ¸Æü(YYYYMMDD)¤òÆşÎÏ¤·Ä¾¤·¤Æ²¼¤µ¤¤"
+					msg = "èª•ç”Ÿæ—¥(YYYYMMDD)ã‚’å…¥åŠ›ã—ç›´ã—ã¦ä¸‹ã•ã„"
 				end
 			end
 
@@ -104,7 +105,7 @@ def sub_send(cc)
 		if (hash_key.size == 0)
 			hash_key["name"] = "^.*$"
 		end
-		msg = "¥Ç¡¼¥¿¤¬¸«¤Ä¤«¤ê¤Ş¤»¤ó¤Ç¤·¤¿"
+		msg = "ãƒ‡ãƒ¼ã‚¿ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸ"
 		number = 0
 		$csv.read_each(hash_key) {|hash_rec|
 			html_param = {}
@@ -138,11 +139,11 @@ def sub_send(cc)
 #--- user coding end   ---
 end
 #
-# ÆşÎÏ¥Ç¡¼¥¿½èÍı
+# å…¥åŠ›ãƒ‡ãƒ¼ã‚¿å‡¦ç†
 #
-#   o ÆşÎÏ¥Ç¡¼¥¿(cc.get_input("...."))¤ò½èÍı¤¹¤ë
-#   o ¼¡¤Î¥È¥é¥ó¥¶¥¯¥·¥ç¥ó¤ËÅÏ¤¹¥Ç¡¼¥¿¤òspa¤Ë¥»¥Ã¥È¤¹¤ë
-#   o ¼¡¤Ëµ¯Æ°¤¹¤ë¥È¥é¥ó¥¶¥¯¥·¥ç¥ó¤òÊÖ¤¹
+#   o å…¥åŠ›ãƒ‡ãƒ¼ã‚¿(cc.get_input("...."))ã‚’å‡¦ç†ã™ã‚‹
+#   o æ¬¡ã®ãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³ã«æ¸¡ã™ãƒ‡ãƒ¼ã‚¿ã‚’spaã«ã‚»ãƒƒãƒˆã™ã‚‹
+#   o æ¬¡ã«èµ·å‹•ã™ã‚‹ãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³ã‚’è¿”ã™
 #
 def sub_recieve(cc)
 #--- user coding start ---
@@ -229,20 +230,20 @@ def sub_recieve(cc)
 #--- user coding end   ---
 end
 #
-# ¥¯¥í¡¼¥º½èÍı
+# ã‚¯ãƒ­ãƒ¼ã‚ºå‡¦ç†
 #
-#    o DBÀÚÃÇ etc
+#    o DBåˆ‡æ–­ etc
 #
 def sub_close(cc)
 #--- user coding start ---
 #--- user coding end   ---
 end
 #
-# ¤½¤ÎÂ¾¤Î¥æ¡¼¥¶´Ø¿ôÄêµÁ
+# ãã®ä»–ã®ãƒ¦ãƒ¼ã‚¶é–¢æ•°å®šç¾©
 #
 #--- user coding start ---
 #--- user coding end   ---
 #
-# ¥á¥¤¥ó½èÍı³«»Ï
+# ãƒ¡ã‚¤ãƒ³å‡¦ç†é–‹å§‹
 #
 main()

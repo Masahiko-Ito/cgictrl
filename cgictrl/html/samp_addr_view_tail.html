@@ -1,28 +1,28 @@
 #
-# html ���
+# html 定義
 #
-#  o `#'�ǻϤޤ�Ԥϥ����ȹ�
-#  o �ե�����̾�� ����̾��.html �Ȥ���
-#  o START=�ִ��о�ʸ����λ��곫��ʸ����(̤������� START=@\{ �ȸ��ʤ�)
-#    END=�ִ��о�ʸ����λ��꽪λʸ����(̤������� END=\}@ �ȸ��ʤ�)
-#    START, END�˻��ꤹ��ʸ������ʬ��ǻ��Ѥ��ʤ�ʸ��������ǻ��ꤹ�����
-#  o �ִ��оݤ� @{�ѿ�̾}@ �ȵ��Ҥ���(START, END������� `@{', `}@'�����ʸ������Ѥ����)
-#  o �ִ��оݤ� @{�ѿ�̾=������}@ �ȵ��Ҥ��뤳�Ȥ�Ǥ������ξ��桼��CGI�����ִ���
-#    �¹Ԥ���ʤ����δ����ͤ���ꤷ�����Ȥˤʤ롣
-#  o <form>��</form>�δ֤ˤ�ɬ���ʲ���input������ޤ�����
-#    (START, END������� `@{', `}@'�����ʸ������Ѥ����)
+#  o `#'で始まる行はコメント行
+#  o ファイル名は 画面名称.html とする
+#  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+#    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+#    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+#  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+#  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+#    実行されない場合の既定値を指定したことになる。
+#  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+#    (START, END指定時は `@{', `}@'を指定文字列に変える事)
 #
 #    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
 #
-#  o <form>�ˤϡ�action="cgictrl.cgi�ؤΥѥ�" ����ꤹ�롣
+#  o <form>には、action="cgictrl.cgiへのパス" を指定する。
 #
 </table>
 <div>
-<input type="submit" name="return" value="���">
+<font color="@{msg_color=black}@">@{msg}@</font>
+</div>
+<div style="position:fixed; bottom:0em; left:0em; padding:3px; background:white; float:left; width:100%;">
+<input type="submit" name="return" value="戻る">
 </div>
 </form>
-<div>
-<font color="@{msg_color=black}@">@{msg}@</color>
-</div>
 </body>
 </html>

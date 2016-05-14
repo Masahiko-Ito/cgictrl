@@ -1,0 +1,5 @@
+_Your_Table_Name_=./tment_top.cgi:RES_DATABASE/A
+TMENT_SELECT=./tment_select.cgi:RES_DATABASE/A
+TMENT_INSERT=./tment_insert.cgi:RES_DATABASE/A
+TMENT_UPDATE=./tment_update.cgi:RES_DATABASE/A
+TMENT_DELETE=./tment_delete.cgi:RES_DATABASE/A

@@ -1,0 +1,6 @@
+o tment(table maintenance cgi) is a part of sample cgi for cgictrl.
+o tment provides CRUD for tables of sqlite3.
+o How to install.
+  - set _Your_Table_Name_ to table name.
+  - set _Any_Where_ to directory name which contains database file.
+  - set correct permission to _Any_Where_ and database file.

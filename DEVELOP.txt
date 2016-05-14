@@ -1,14 +1,14 @@
-cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
 
-$$ ��ȯ�μ�� $$
+$$ 開発の手引 $$
 
-��ʸ��Ǥ� cgictrl�Υ��󥹥ȡ��뤫�鳫ȯ�ޤǤ�Ʊ���Υ���ץ�CGI�����
-��äơ�����ɤäƶ���Ū���������롣
+本文書では cgictrlのインストールから開発までを同梱のサンプルCGIを例に
+取って、順を追って具体的に説明する。
 
-���󥹥ȡ���
+インストール
 ============
 
-  o tar xvzf cgictrl-0.1.tar.gz
+  o tar xvzf cgictrl-0.2.tar.gz
 
   o mkdir ~/cgictrl
   o mkdir ~/cgictrl/html
@@ -16,164 +16,182 @@ $$ ��ȯ�μ�� $$
   o mkdir ~/cgictrl/lock
   o mkdir ~/cgictrl/log
   o mkdir ~/cgictrl/spa
+  o mkdir ~/cgictrl/tmp
 
   o chmod ???? ~/cgictrl ~/cgictrl/html
-    http�����Фθ��¤ǻ��ȤǤ���褦�����ꤹ�롣
-  o chmod ???? ~/cgictrl/lock ~/cgictrl/log ~/cgictrl/spa
-    http�����Фθ��¤ǹ����Ǥ���褦�����ꤹ�롣
+    httpサーバの権限で参照できるように設定する。
+  o chmod ???? ~/cgictrl/lock ~/cgictrl/log ~/cgictrl/spa ~/cgictrl/tmp
+    httpサーバの権限で更新できるように設定する。
 
-  o cp cgictrl-0.1/cgi-bin/* ~/public_html/cgi-bin/
-  o cp cgictrl-0.1/cgictrl/*.txt ~/cgictrl/
-  o cp cgictrl-0.1/cgictrl/html/* ~/cgictrl/html/
+  o cp cgictrl-0.2/cgi-bin/* ~/public_html/cgi-bin/
+  o cp cgictrl-0.2/cgictrl/*.txt ~/cgictrl/
+  o cp cgictrl-0.2/cgictrl/html/* ~/cgictrl/html/
 
-��ȯ���
+  o vi ~/public_html/cgi-bin/cgictrl_common.cgi
+    @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"
+
+  o vi ~/cgictrl/resource.txt
+    RES_ADDR=/home/自分のアカウント/cgictrl/tmp/samp_addr.csv
+
+開発手順
 ========
 
-�ʲ��Ǥϥ���ץ�CGI�Ȥ���Ʊ�����Ƥ��� 
+以下ではサンプルCGIとして同梱している 
 
   o samp_calc_entry.cgi
   o samp_calc_result.cgi
 
-����Ȥ����������ƹԤ����ʤ����ܥ���ץ� CGI�ϡ���(��)��Ⱦ�¤����Ϥ���
-��������(����)������ñ�ʥץ������Ǥ��롣
+を例として説明して行く。なお、本サンプル CGIは、円(球)の半径を入力し、
+その面積(体積)を求める簡単なプログラムである。
 
-~/cgictrl/resource.txt ������
+~/cgictrl/resource.txt の設定
 =============================
 
-��ȯ���褦�Ȥ���CGI���ץꥱ�������ǰ����꥽������������롣��¾����
-���оΤȤ���٤ˤϡ����Υե������ɬ����Ͽ����ɬ�פ����롣
+開発しようとするCGIアプリケーションで扱うリソースを定義する。排他制御
+の対称とする為には、このファイルに必ず登録する必要がある。
 
   RES_SAMP=/somewhere/dummy.txt
 
-�ܥ���ץ�CGI�Ǥϡ���¾�о������ɬ�פʥ꥽�����ϼ�갷��ʤ���������
-Ū�ʳ�ȯ���ˤʤ��館�������ƥ꥽����(���ߡ�)��������Ƥ��롣
+本サンプルCGIでは、排他対称制御の必要なリソースは取り扱わないが、一般
+的な開発手順になぞらえ、あえてリソース(ダミー)を定義している。
 
-~/cgictrl/tran2pgm.txt ������
+~/cgictrl/tran2pgm.txt の設定
 =============================
 
-��ȯ���褦�Ȥ���CGI���ץꥱ��������ư����٤Υȥ�󥶥�����󥳡�
-�ɤȡ��ܥȥ�󥶥���������¾�оΤȤ���꥽������������롣
+開発しようとするCGIアプリケーションを起動する為のトランザクションコー
+ドと、本トランザクションで排他対称とするリソースを定義する。
 
   SAMP_CALC_ENTRY=/somewhere/cgi-bin/samp_calc_entry.cgi:RES_SAMP/A
   SAMP_CALC_RESULT=/somewhere/cgi-bin/samp_calc_result.cgi:RES_SAMP/A
 
-�⤷ cgictrl.cgi��¸�ߤ���ǥ��쥯�ȥ�˳�ȯ����CGI��Ǽ������
+もし cgictrl.cgiの存在するディレクトリに開発するCGIを納める場合は
 
   SAMP_CALC_ENTRY=./samp_calc_entry.cgi:RES_SAMP/A
   SAMP_CALC_RESULT=./samp_calc_result.cgi:RES_SAMP/A
 
-���ͤˡ����Хѥ��Ǥε��Ҥ��ǽ�Ǥ��롣
+の様に、相対パスでの記述も可能である。
 
-�ܥ���ץ�CGI�Ǥϡ���¾�о������ɬ�פʥ꥽�����ϼ�갷��ʤ���������
-Ū�ʳ�ȯ���ˤʤ��館�������ƥ꥽����(���ߡ�)��������Ƥ��롣
+本サンプルCGIでは、排他対称制御の必要なリソースは取り扱わないが、一般
+的な開発手順になぞらえ、あえてリソース(ダミー)を定義している。
 
-~/cgictrl/usertran.txt ������
+~/cgictrl/usertran.txt の設定
 =============================
 
-http�Υ桼��ǧ�ڵ�ǽ(Basicǧ�ڡ�Digestǧ����)�ˤ��ǧ�ڤ��줿�桼����
-�Ф��Ƽ¹Ԥ���Ĥ���ȥ�󥶥����������ꤹ�롣ǧ�ڵ�ǽ�����Ѥ��ʤ���
-���ƿ̾�桼��(anonymous)���Ф��Ƶ��Ĥ���ȥ�󥶥����������ꤹ��ɬ
-�פ����롣���Ĥ���ȥ�󥶥�����������ɽ���ǵ��ҤǤ��롣
+httpのユーザ認証機能(Basic認証、Digest認証等)により認証されたユーザに
+対して実行を許可するトランザクションを設定する。認証機能を利用しない場
+合は匿名ユーザ(anonymous)に対して許可するトランザクションを設定する必
+要がある。許可するトランザクションは正規表現で記述できる。
 
   anonymous=SAMP_CALC_.*
 
-cgictrl_common.cgi�Ǥδ����ͤθ�ľ��
+cgictrl_common.cgiでの既定値の見直し
 ====================================
 
-�����Ȥ��Ȥ�ɬ�������ľ���٤�����
+サイトごとに必ず設定を見直すべき項目
 
-  o cgictrl�����Ѥ���ǡ����ǥ��쥯�ȥꡣ���󥹥ȡ�����˺��������ǥ�
-    �쥯�ȥ����ꤹ�롣
+  o cgictrlが利用するデータディレクトリ。インストール時に作成したディ
+    レクトリを指定する。
 
     @cgictrl_data_dir = "/home/.../cgictrl"
   
-�����Ȥ����ˤˤ�������ľ���٤�����
+サイトの方針により設定を見直すべき項目
 
-  o https(ssl)�̿��˴ؤ�����ꡣ
+  o https(ssl)通信に関する指定。
 
-    @force_https = "y" : https�̿��Ǥʤ���Х��顼�Ȥ��롣
-    @force_https = "n" : http�̿�/https�̿��Τɤ������Ĥ���(������)��
+    @force_https = "y" : https通信でなければエラーとする。
+    @force_https = "n" : http通信/https通信のどちらも許可する(既定値)。
 
-  o [���]�ܥ���μ�갷���˴ؤ�����ꡣ
+  o [戻る]ボタンの取り扱いに関する指定。
 
-    @backward_deny = "y" : [���]�ܥ�����̤ä��ڡ�������ν�����³��
-                           �ػߤ���(������)��
-    @backward_deny = "n" : [���]�ܥ�����̤ä��ڡ�������ν�����³��
-                           �ػߤ��ʤ���
+    @backward_deny = "y" : [戻る]ボタンで遡ったページからの処理継続を
+                           禁止する(既定値)。
+    @backward_deny = "n" : [戻る]ボタンで遡ったページからの処理継続を
+                           禁止しない。
 
-  o form�������Ϥ��줿�ǡ������Ф���Ŭ������nkf�Ѵ��ѥ�᡼���λ��ꡣ
+  o [戻る]ボタンを禁止した場合のエラーメッセージの指定。
 
-    @default_nkf_param = "-E -X -Z1 -e"
+    @backward_deny_msg = "Status: 204 No Response\n\n" : 画面の遷移を止める(既定値)。
 
-  o <form>��������ϥǡ����Υ��������˴ؤ�����ꡣ
+    @backward_deny_msg = "Location: http://foo/bar.html\n\n" : 別の画面へ強制的に飛ばす(例)。
+    @backward_deny_msg = "Your session sequence is invalid." : 指定したメッセージをそのまま表示する(例)。
 
-    @get_log_input_flag = "y" : �����˵�Ͽ����(������)��
-    @get_log_input_flag = "n" : �����˵�Ͽ���ʤ���
+  o formから入力されたデータに対して適応するnkf変換パラメータの指定。
 
-  o ���Ϥ������̥��᡼���Υ��������˴ؤ�����ꡣ
+    @default_nkf_param = "-W -X -Z1 -w"
 
-    @get_log_send_flag = "y" : �����˵�Ͽ����(������)��
-    @get_log_send_flag = "n" : �����˵�Ͽ���ʤ���
+  o <form>からの入力データのログ取得に関する指定。
 
-  o �ȥ�󥶥������μ¹Ե��ݤΥ��������˴ؤ�����ꡣ
+    @get_log_input_flag = "y" : ログに記録する(既定値)。
+    @get_log_input_flag = "n" : ログに記録しない。
 
-    @get_log_deny_flag = "y" : �����˵�Ͽ����(������)��
-    @get_log_deny_flag = "n" : �����˵�Ͽ���ʤ���
+  o 出力した画面イメージのログ取得に関する指定。
 
-  o �ȥ�󥶥���������ǥ��顼�Υ��������˴ؤ�����ꡣ
+    @get_log_send_flag = "y" : ログに記録する(既定値)。
+    @get_log_send_flag = "n" : ログに記録しない。
 
-    @get_log_error_flag = "y" : �����˵�Ͽ����(������)��
-    @get_log_error_flag = "n" : �����˵�Ͽ���ʤ���
+  o トランザクションの実行拒否のログ取得に関する指定。
 
-  o ��¾��ȥ饤���δֳ�(��)��
+    @get_log_deny_flag = "y" : ログに記録する(既定値)。
+    @get_log_deny_flag = "n" : ログに記録しない。
+
+  o トランザクション中断エラーのログ取得に関する指定。
+
+    @get_log_error_flag = "y" : ログに記録する(既定値)。
+    @get_log_error_flag = "n" : ログに記録しない。
+
+  o 排他リトライ時の間隔(秒)。
 
     @lock_sleep_sec = 1
 
-  o ��¾��ȥ饤�ξ�²����
+  o 排他リトライの上限回数。
 
     @lock_retry_max = 60
 
-  o �������(��)���Ť�SPA�ե���������оݤȤ��롣
+  o 指定時間(秒)より古いSPAファイルを削除対象とする。
 
     @sweep_time_before = 2 * 24 * 60 * 60
 
-����������������(~/cgictrl/html/*.html)
+  o umask値
+
+    @umask = 007
+
+画面定義を作成する(~/cgictrl/html/*.html)
 =========================================
 
-samp_calc_entry.cgi�β�������� ~/cgictrl/html/samp_calc_entry.html
-�Ȥ��ƺ������롣
+samp_calc_entry.cgiの画面定義を ~/cgictrl/html/samp_calc_entry.html
+として作成する。
 
    1  #
-   2  # html ���
+   2  # html 定義
    3  #
-   4  #  o `#'�ǻϤޤ�Ԥϥ����ȹ�
-   5  #  o �ե�����̾�� ����̾��.html �Ȥ���
-   6  #  o START=�ִ��о�ʸ����λ��곫��ʸ����(̤������� START=@\{ �ȸ��ʤ�)
-   7  #    END=�ִ��о�ʸ����λ��꽪λʸ����(̤������� END=\}@ �ȸ��ʤ�)
-   8  #    START, END�˻��ꤹ��ʸ������ʬ��ǻ��Ѥ��ʤ�ʸ��������ǻ��ꤹ�����
-   9  #  o �ִ��оݤ� @{�ѿ�̾}@ �ȵ��Ҥ���(START, END������� `@{', `}@'�����ʸ������Ѥ����)
-  10  #  o �ִ��оݤ� @{�ѿ�̾=������}@ �ȵ��Ҥ��뤳�Ȥ�Ǥ������ξ��桼��CGI�����ִ���
-  11  #    �¹Ԥ���ʤ����δ����ͤ���ꤷ�����Ȥˤʤ롣
-  12  #  o <form>��</form>�δ֤ˤ�ɬ���ʲ���input������ޤ�����
-  13  #    (START, END������� `@{', `}@'�����ʸ������Ѥ����)
+   4  #  o `#'で始まる行はコメント行
+   5  #  o ファイル名は 画面名称.html とする
+   6  #  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+   7  #    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+   8  #    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+   9  #  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+  10  #  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+  11  #    実行されない場合の既定値を指定したことになる。
+  12  #  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+  13  #    (START, END指定時は `@{', `}@'を指定文字列に変える事)
   14  #
   15  #    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
   16  #
-  17  #  o <form>�ˤϡ�action="cgictrl.cgi�ؤΥѥ�" ����ꤹ�롣
+  17  #  o <form>には、action="cgictrl.cgiへのパス" を指定する。
   18  #
-  19  Content-Type: text/html; charset=EUC-JP
+  19  Content-Type: text/html; charset=utf-8
   20  
   21  <html>
   22  <head>
-  23  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
-  24  <title>�ߤ����ѡ�������Ѥ����(����)</title>
+  23  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  24  <title>円の面積、球の体積を求める(入力)</title>
   25  </head>
   26  <body>
-  27  <div align="center"><h1>�ߤ����ѡ�������Ѥ����(����)</h1></div>
+  27  <div align="center"><h1>円の面積、球の体積を求める(入力)</h1></div>
   28  <form method="post" action="./cgictrl.cgi">
   29  <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
-  30  Ⱦ�¤ϡ� : <input type="text" name="hankei" value="@{hankei}@"> ������᡼�ȥ�
-  31  <input type="submit" name="next" value="����">
+  30  半径は？ : <input type="text" name="hankei" value="@{hankei}@"> センチメートル
+  31  <input type="submit" name="next" value="次へ">
   32  </form>
   33  <div>
   34  <font color="@{msg_color=black}@">@{msg}@</color>
@@ -181,73 +199,73 @@ samp_calc_entry.cgi�β�������� ~/cgictrl/html/samp_calc_entry.html
   36  </body>
   37  </html>
 
-  1��18�� : `#'�ǻϤޤ�Ԥϥ����ȹԤȤʤ롣
-  19��    : HTTP�إå����ε���(ɬ��)������ƥ�Ĥ�ʸ�������ɤ���ꤷ��
-            ���롣
-  20��    : HTTP�إå����ε��Ҥ�HTML�ε��Ҥδ֤ϲ��ԤǶ��ڤ�ɬ�פ����롣
-  21��    : html ���ϥ�����
-  22��    : head ���ϥ�����
-  23��    : meta������(��)����ƥ�Ĥ�ʸ�������ɤ���ꤷ�Ƥ��롣
-  24��    : title�����ˤƥ����ȥ����ꤷ�Ƥ��롣
-  25��    : head �Ĥ�������
-  26��    : body ���ϥ�����
-  27��    : �����ȥ��Ԥ������ɽ����
-  28��    : form ���ϥ�����action�ѥ�᡼���ˤϾ��cgictrl.cgi��ƤӽФ�
-            �褦�˻��ꤹ�롣
-  29��    : ���å����ID�����Ѥ�input����(ɬ��)������ץ���̤�˻��ꤹ
-            �롣@{SYS_sessionid}@����ʬ��cgictrl.cgi�ˤ���ִ�����롣
-  30��    : input�������桼�����������(Ⱦ��)������롣@{hankei}@����ʬ
-            �� samp_calc_entry.cgi�����ִ����롣
-  31��    : input�����������ܥ���(����)��ɽ�����롣
-  32��    : form �Ĥ�������
-  33��    : div ���ϥ�����
-  34��    : ��å�����ɽ���ΰ�������@{...}@����ʬ�ϡ�
-            samp_calc_entry.cgi�����ִ����롣@{msg_color=black}@�ε��Ҥ�
-            �ϡ�������ʬ�δ����ͤ� black �˻��ꤷ�Ƥ��롣
-  35��    : div �Ĥ�������
-  36��    : body �Ĥ�������
-  37��    : html �Ĥ�������
+  1〜18行 : `#'で始まる行はコメント行となる。
+  19行    : HTTPヘッダーの記述(必須)。コンテンツの文字コードを指定して
+            いる。
+  20行    : HTTPヘッダーの記述とHTMLの記述の間は改行で区切る必要がある。
+  21行    : html 開始タグ。
+  22行    : head 開始タグ。
+  23行    : metaタグで(も)コンテンツの文字コードを指定している。
+  24行    : titleタグにてタイトルを指定している。
+  25行    : head 閉じタグ。
+  26行    : body 開始タグ。
+  27行    : タイトルを行の中央に表示。
+  28行    : form 開始タグ。actionパラメータには常にcgictrl.cgiを呼び出す
+            ように指定する。
+  29行    : セッションID指定用のinputタグ(必須)。サンプルの通りに指定す
+            る。@{SYS_sessionid}@の部分がcgictrl.cgiにより置換される。
+  30行    : inputタグ。ユーザからの入力(半径)を受ける。@{hankei}@の部分
+            は samp_calc_entry.cgiから置換する。
+  31行    : inputタグ。送信ボタン(次へ)を表示する。
+  32行    : form 閉じタグ。
+  33行    : div 開始タグ。
+  34行    : メッセージ表示領域の定義。@{...}@の部分は、
+            samp_calc_entry.cgiから置換する。@{msg_color=black}@の記述で
+            は、この部分の既定値を black に指定している。
+  35行    : div 閉じタグ。
+  36行    : body 閉じタグ。
+  37行    : html 閉じタグ。
 
-samp_calc_result.cgi�β�������� ~/cgictrl/html/samp_calc_result.html
-�Ȥ��ƺ������롣
+samp_calc_result.cgiの画面定義を ~/cgictrl/html/samp_calc_result.html
+として作成する。
 
    1  #
-   2  # html ���
+   2  # html 定義
    3  #
-   4  #  o `#'�ǻϤޤ�Ԥϥ����ȹ�
-   5  #  o �ե�����̾�� ����̾��.html �Ȥ���
-   6  #  o START=�ִ��о�ʸ����λ��곫��ʸ����(̤������� START=@\{ �ȸ��ʤ�)
-   7  #    END=�ִ��о�ʸ����λ��꽪λʸ����(̤������� END=\}@ �ȸ��ʤ�)
-   8  #    START, END�˻��ꤹ��ʸ������ʬ��ǻ��Ѥ��ʤ�ʸ��������ǻ��ꤹ�����
-   9  #  o �ִ��оݤ� @{�ѿ�̾}@ �ȵ��Ҥ���(START, END������� `@{', `}@'�����ʸ������Ѥ����)
-  10  #  o �ִ��оݤ� @{�ѿ�̾=������}@ �ȵ��Ҥ��뤳�Ȥ�Ǥ������ξ��桼��CGI�����ִ���
-  11  #    �¹Ԥ���ʤ����δ����ͤ���ꤷ�����Ȥˤʤ롣
-  12  #  o <form>��</form>�δ֤ˤ�ɬ���ʲ���input������ޤ�����
-  13  #    (START, END������� `@{', `}@'�����ʸ������Ѥ����)
+   4  #  o `#'で始まる行はコメント行
+   5  #  o ファイル名は 画面名称.html とする
+   6  #  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+   7  #    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+   8  #    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+   9  #  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+  10  #  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+  11  #    実行されない場合の既定値を指定したことになる。
+  12  #  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+  13  #    (START, END指定時は `@{', `}@'を指定文字列に変える事)
   14  #
   15  #    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
   16  #
-  17  #  o <form>�ˤϡ�action="cgictrl.cgi�ؤΥѥ�" ����ꤹ�롣
+  17  #  o <form>には、action="cgictrl.cgiへのパス" を指定する。
   18  #
-  19  Content-Type: text/html; charset=EUC-JP
+  19  Content-Type: text/html; charset=utf-8
   20  
   21  <html>
   22  <head>
-  23  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
-  24  <title>�ߤ����ѡ�������Ѥ����(���)</title>
+  23  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  24  <title>円の面積、球の体積を求める(結果)</title>
   25  </head>
   26  <body>
-  27  <div align="center"><h1>�ߤ����ѡ�������Ѥ����(���)</h1></div>
+  27  <div align="center"><h1>円の面積、球の体積を求める(結果)</h1></div>
   28  <form method="post" action="./cgictrl.cgi">
   29  <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
   30  <div>
-  31  Ⱦ�¤�@{hankei}@������᡼�ȥ�αߤ����Ѥ�@{menseki}@ʿ��������᡼�ȥ�Ǥ���
+  31  半径が@{hankei}@センチメートルの円の面積は@{menseki}@平方センチメートルです。
   32  </div>
   33  <div>
-  34  Ⱦ�¤�@{hankei}@������᡼�ȥ�ε�����Ѥ�@{taiseki}@Ω��������᡼�ȥ�Ǥ���
+  34  半径が@{hankei}@センチメートルの球の体積は@{taiseki}@立方センチメートルです。
   35  </div>
   36  <div>
-  37  <input type="submit" name="return" value="���">
+  37  <input type="submit" name="return" value="戻る">
   38  </div>
   39  </form>
   40  <div>
@@ -256,23 +274,23 @@ samp_calc_result.cgi�β�������� ~/cgictrl/html/samp_calc_result.html
   43  </body>
   44  </html>
 
-����Ͼ�ά��
+解説は省略。
 
-CGI�ץ��������������
+CGIプログラムを作成する
 =======================
 
-cgictrl�۲���CGI�ץ������ϰ���Υ����å��������롣�桼���ϼ�ʬ��
-������å����饳���ǥ��󥰤�������ǽ�ǤϤ��뤬��Ʊ������Ƥ��륹����
-�ȥ�(���Ȥ�)CGI�Ǥ��� skeleton.cgi �򥳥ԡ����ƥ����ǥ��󥰤������侩
-���롣
+cgictrl配下のCGIプログラムは一定のロジックが定められる。ユーザは自分で
+スクラッチからコーディングする事も可能ではあるが、同梱されているスケル
+トン(骨組み)CGIである skeleton.cgi をコピーしてコーディングする事を推奨
+する。
 
-samp_calc_entry.cgi(Ⱦ�¤����Ϥ�����դ���CGI)��������롣
+samp_calc_entry.cgi(半径の入力を受け付けるCGI)を作成する。
 
     1  #! /usr/bin/ruby
     2  #
-    3  # cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+    3  # cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
     4  #
-    5  #   �桼�������ǥ��󥰥���ץ륹����ץ�
+    5  #   ユーザコーディングサンプルスクリプト
     6  #
     7  require "cgi"
     8  require "uri"
@@ -281,7 +299,7 @@ samp_calc_entry.cgi(Ⱦ�¤����Ϥ�����դ���CGI)��������롣
    11  #--- user coding start ---
    12  #--- user coding end   ---
    13  #
-   14  # �ᥤ�����
+   14  # メイン処理
    15  #
    16  def main()
    17          cc = Cgictrl.new
@@ -297,19 +315,19 @@ samp_calc_entry.cgi(Ⱦ�¤����Ϥ�����դ���CGI)��������롣
    27          exit 0
    28  end
    29  #
-   30  # �����ץ����
+   30  # オープン処理
    31  #
-   32  #    o DB��³ etc
+   32  #    o DB接続 etc
    33  #
    34  def sub_open(cc)
    35  #--- user coding start ---
    36  #--- user coding end   ---
    37  end
    38  #
-   39  # �����Խ�����
+   39  # 画面編集処理
    40  #
-   41  #   o spa�ˤ���Ϥ��줿�ǡ����򸵤˲��̤��Խ�����
-   42  #   o ���˵�ư����ȥ�󥶥������(�̾�ϼ��ȥ�󥶥�������Ʊ��)���֤�
+   41  #   o spaにより渡されたデータを元に画面を編集する
+   42  #   o 次に起動するトランザクション(通常は自トランザクションと同じ)を返す
    43  #
    44  def sub_send(cc)
    45  #--- user coding start ---
@@ -319,7 +337,7 @@ samp_calc_entry.cgi(Ⱦ�¤����Ϥ�����դ���CGI)��������롣
    49  
    50          if (cc.get_spa("err_sw") == "ER01")
    51                  html_param["msg_color"] = "red"
-   52                  html_param["msg"] = "���������Ϥ��Ʋ�����"
+   52                  html_param["msg"] = "数字を入力して下さい"
    53          end
    54  
    55          cc.out_html("samp_calc_entry", html_param)
@@ -328,11 +346,11 @@ samp_calc_entry.cgi(Ⱦ�¤����Ϥ�����դ���CGI)��������롣
    58  #--- user coding end   ---
    59  end
    60  #
-   61  # ���ϥǡ�������
+   61  # 入力データ処理
    62  #
-   63  #   o ���ϥǡ������������
-   64  #   o ���Υȥ�󥶥��������Ϥ��ǡ�����spa�˥��åȤ���
-   65  #   o ���˵�ư����ȥ�󥶥��������֤�
+   63  #   o 入力データを処理する
+   64  #   o 次のトランザクションに渡すデータをspaにセットする
+   65  #   o 次に起動するトランザクションを返す
    66  #
    67  def sub_recieve(cc)
    68  #--- user coding start ---
@@ -354,76 +372,76 @@ samp_calc_entry.cgi(Ⱦ�¤����Ϥ�����դ���CGI)��������롣
    84  #--- user coding end   ---
    85  end
    86  #
-   87  # ������������
+   87  # クローズ処理
    88  #
-   89  #    o DB���� etc
+   89  #    o DB切断 etc
    90  #
    91  def sub_close(cc)
    92  #--- user coding start ---
    93  #--- user coding end   ---
    94  end
    95  #
-   96  # ����¾�Υ桼���ؿ����
+   96  # その他のユーザ関数定義
    97  #
    98  #--- user coding start ---
    99  #--- user coding end   ---
   100  #
-  101  # �ᥤ���������
+  101  # メイン処理開始
   102  #
   103  main()
 
-��§��
+原則、
 
   #--- user coding start ---
   #--- user coding end   ---
 
-���ϰϤ˥����ǥ��󥰤�Ԥ���
+の範囲にコーディングを行う。
 
-  11�ԡ�12�� : ���̤�ɬ�פʥ饤�֥����ɤ߹���(require)�䡢����ѿ�����
-               ����Ԥ����ܥ���ץ�Ǥϥ����ǥ���̵����
-  35�ԡ�36�� : ��ư����ɬ���ƤФ��롼����(sub_open)��������ǡ����١�
-               ���ؤ���³�������Υ����ǥ��󥰤����ꤷ�Ƥ��롣�ܥ���ץ�
-               �Ǥϥ����ǥ���̵����
-  45�ԡ�58�� : ��CGI��cgictrl.cgi���[���̺�������]�Ȥ��Ƶ�ư���줿���
-               �˸ƤӽФ����롼����(sub_send)�������
+  11行〜12行 : 個別に必要なライブラリの読み込み(require)や、大局変数の定
+               義を行う。本サンプルではコーディング無し。
+  35行〜36行 : 起動時に必ず呼ばれるルーチン(sub_open)の定義。データベー
+               スへの接続処理等のコーディングを想定している。本サンプル
+               ではコーディング無し。
+  45行〜58行 : 本CGIがcgictrl.cgiより[画面作成処理]として起動された場合
+               に呼び出されるルーチン(sub_send)の定義。
   
-        46�� : ���̤���Ϥ���᥽�å�(out_html)�ذ����Ϥ��ִ��ѥ�᡼��
-               �ν������
-        48�� : ���̤�����Ϥ��줿Ⱦ�¤�spa���ꥢ��������ߡ��ִ��ѥ�᡼
-               �������ꤹ�롣
-  50�ԡ�53�� : SPA���ꥢ��err_sw��Ƚ�Ǥ�����å������ο��ȥ�å���������
-               ���ִ��ѥ�᡼�������ꤹ�롣
-        55�� : ���̽��ϥ᥽�å�(out_html)��ƤӽФ���
-        57�� : ���˸ƤӽФ��ȥ�󥶥�����󥳡��ɤ��֤�����§��sub_send
-               �롼����ˤ����Ƥϼ��ȥ�󥶥������(SAMP_CALC_ENTRY)���
-               �ꤹ�롣
+        46行 : 画面を出力するメソッド(out_html)へ引き渡す置換パラメータ
+               の初期化。
+        48行 : 画面より入力された半径をspaエリアから取り込み、置換パラメー
+               タに設定する。
+  50行〜53行 : SPAエリアのerr_swを判断し、メッセージの色とメッセージ内容
+               を置換パラメータに設定する。
+        55行 : 画面出力メソッド(out_html)を呼び出す。
+        57行 : 次に呼び出すトランザクションコードを返す。原則、sub_send
+               ルーチンにおいては自トランザクション(SAMP_CALC_ENTRY)を指
+               定する。
   
-  68�ԡ�84�� : ��CGI��cgictrl.cgi���[���Ͻ���]�Ȥ��Ƶ�ư���줿���˸�
-               �ӽФ����롼����(sub_recieve)�������
+  68行〜84行 : 本CGIがcgictrl.cgiより[入力処理]として起動された場合に呼
+               び出されるルーチン(sub_recieve)の定義。
   
-        69�� : �ǡ������ϥ����å�����Ω�äơ�SPA��err_sw�򥯥ꥢ���Ƥ�����
-        71�� : ���Ϥ��줿Ⱦ�¤�����ࡣ
-        72�� : �����β���ʸ���������(ǰ�Τ���)��
-  73�ԡ�75�� : ����(�ݤ�)�ǡ�����̵�����SPA��err_sw�˥��顼�����ɤ�����
-               ���롣
-        77�� : Ⱦ�¤򼡤Υȥ�󥶥������˼����Ϥ������SPA�ΰ�˥��å�
-               ���롣
-  79�ԡ�83�� : ���Ϥ˥��顼��̵����м���ư�ȥ�󥶥������� 
-               SAMP_CALC_RESULT ���֤������顼��ͭ���(�����Ϥ򤦤ʤ���
-               �٤�) SAMP_CALC_ENTRY(���ȥ�󥶥������) ���֤���
+        69行 : データ入力チェックに先立って、SPAのerr_swをクリアしておく。
+        71行 : 入力された半径を取り込む。
+        72行 : 末尾の改行文字を取り除く(念のため)。
+  73行〜75行 : 数値(ぽい)データで無ければSPAのerr_swにエラーコードを設定
+               する。
+        77行 : 半径を次のトランザクションに受け渡すためにSPA領域にセット
+               する。
+  79行〜83行 : 入力にエラーが無ければ次回起動トランザクションに 
+               SAMP_CALC_RESULT を返し、エラーが有れば(再入力をうながす
+               為に) SAMP_CALC_ENTRY(自トランザクション) を返す。
   
-  92�ԡ�93�� : ��λ����ɬ���ƤФ��롼����(sub_close)��������ǡ����١�
-               �������ǽ������Υ����ǥ��󥰤����ꤷ�Ƥ��롣�ܥ���ץ��
-               �ϥ����ǥ���̵����
-  98�ԡ�99�� : �桼���ؿ�������ΰ衣�ܥ���ץ�Ǥϥ����ǥ���̵����
+  92行〜93行 : 終了時に必ず呼ばれるルーチン(sub_close)の定義。データベー
+               スの切断処理等のコーディングを想定している。本サンプルで
+               はコーディング無し。
+  98行〜99行 : ユーザ関数の定義領域。本サンプルではコーディング無し。
 
-samp_calc_result.cgi(���ѡ����Ѥ�׻���ɽ������CGI)��������롣
+samp_calc_result.cgi(面積、体積を計算し表示するCGI)を作成する。
 
    1  #! /usr/bin/ruby
    2  #
-   3  # cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+   3  # cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
    4  #
-   5  #   �桼�������ǥ��󥰥���ץ륹����ץ�
+   5  #   ユーザコーディングサンプルスクリプト
    6  #
    7  require "cgi"
    8  require "uri"
@@ -432,7 +450,7 @@ samp_calc_result.cgi(���ѡ����Ѥ�׻���ɽ������CGI)��������롣
   11  #--- user coding start ---
   12  #--- user coding end   ---
   13  #
-  14  # �ᥤ�����
+  14  # メイン処理
   15  #
   16  def main()
   17          cc = Cgictrl.new
@@ -448,19 +466,19 @@ samp_calc_result.cgi(���ѡ����Ѥ�׻���ɽ������CGI)��������롣
   27          exit 0
   28  end
   29  #
-  30  # �����ץ����
+  30  # オープン処理
   31  #
-  32  #    o DB��³ etc
+  32  #    o DB接続 etc
   33  #
   34  def sub_open(cc)
   35  #--- user coding start ---
   36  #--- user coding end   ---
   37  end
   38  #
-  39  # �����Խ�����
+  39  # 画面編集処理
   40  #
-  41  #   o spa�ˤ���Ϥ��줿�ǡ����򸵤˲��̤��Խ�����
-  42  #   o ���˵�ư����ȥ�󥶥������(�̾�ϼ��ȥ�󥶥�������Ʊ��)���֤�
+  41  #   o spaにより渡されたデータを元に画面を編集する
+  42  #   o 次に起動するトランザクション(通常は自トランザクションと同じ)を返す
   43  #
   44  def sub_send(cc)
   45  #--- user coding start ---
@@ -476,11 +494,11 @@ samp_calc_result.cgi(���ѡ����Ѥ�׻���ɽ������CGI)��������롣
   55  #--- user coding end   ---
   56  end
   57  #
-  58  # ���ϥǡ�������
+  58  # 入力データ処理
   59  #
-  60  #   o ���ϥǡ������������
-  61  #   o ���Υȥ�󥶥��������Ϥ��ǡ�����spa�˥��åȤ���
-  62  #   o ���˵�ư����ȥ�󥶥��������֤�
+  60  #   o 入力データを処理する
+  61  #   o 次のトランザクションに渡すデータをspaにセットする
+  62  #   o 次に起動するトランザクションを返す
   63  #
   64  def sub_recieve(cc)
   65  #--- user coding start ---
@@ -490,139 +508,160 @@ samp_calc_result.cgi(���ѡ����Ѥ�׻���ɽ������CGI)��������롣
   69  #--- user coding end   ---
   70  end
   71  #
-  72  # ������������
+  72  # クローズ処理
   73  #
-  74  #    o DB���� etc
+  74  #    o DB切断 etc
   75  #
   76  def sub_close(cc)
   77  #--- user coding start ---
   78  #--- user coding end   ---
   79  end
   80  #
-  81  # ����¾�Υ桼���ؿ����
+  81  # その他のユーザ関数定義
   82  #
   83  #--- user coding start ---
   84  #--- user coding end   ---
   85  #
-  86  # �ᥤ���������
+  86  # メイン処理開始
   87  #
   88  main()
 
-����Ͼ�ά��
+解説は省略。
 
-Cgictrl class���������Ƥ���᥽�å�
+Cgictrl classに定義されているメソッド
 =====================================
 
-��˥桼��CGI�����Ѥ���᥽�åɤ�Ҳ𤹤롣
+主にユーザCGIで利用するメソッドを紹介する。
 
   o get_realres(res)
 
-     �꥽�������μ���
+     リソース実体取得
 
-     ��  ����res ... �꥽����ID
-     ����͡��꥽�����μ��Τ�ɽ��ʸ����
+     引  数：res ... リソースID
+     戻り値：リソースの実体を表す文字列
 
   o get_input(key)
 
-     ����ץåȥǡ�������
+     インプットデータ取得
 
-     ��  ����key ... ����̾��
-     ����͡����ܤ��Ф�����(���ͥǡ�����ޤ������ʸ����Ȥ����֤�ޤ�)
+     引  数：key ... 項目名称
+     戻り値：項目に対する値(数値データも含めて全て文字列として返ります)
 
   o set_input(key, value)
 
-     ����ץåȥǡ�������
+     インプットデータ設定
 
-     ��  ����key ... ����̾��
-             value ... ���ܤ��Ф������ꤹ����
-     ����͡�̵��
+     引  数：key ... 項目名称
+             value ... 項目に対して設定する値
+     戻り値：無し
 
   o get_input_file(key)
 
-     ����ץåȥե�����ǡ�������
+     インプットファイルデータ取得
 
-     ��  ����key ... ����̾��
-     ����͡����ܤ��Ф�����
+     引  数：key ... 項目名称
+     戻り値：項目に対する値
 
   o set_input_file(key, value)
 
-     ����ץåȥե�����ǡ�������
+     インプットファイルデータ設定
 
-     ��  ����key ... ����̾��
-             value ... ���ܤ��Ф������ꤹ����
-     ����͡�̵��
+     引  数：key ... 項目名称
+             value ... 項目に対して設定する値
+     戻り値：無し
 
   o get_spa(key)
 
-     SPA�ǡ�������
+     SPAデータ取得
 
-     ��  ����key ... ����̾��
-     ����͡����ܤ��Ф�����(���ͥǡ�����ޤ������ʸ����Ȥ����֤�ޤ�)
+     引  数：key ... 項目名称
+     戻り値：項目に対する値(数値データも含めて全て文字列として返ります)
 
   o set_spa(key, value)
 
-     SPA�ǡ�������
+     SPAデータ設定
 
-     ��  ����key ... ����̾��
-             value ... ���ܤ��Ф������ꤹ����
-     ����͡�̵��
+     引  数：key ... 項目名称
+             value ... 項目に対して設定する値
+     戻り値：無し
 
   o clear_spa()
 
-     SPA���ꥢ��(����̾�Τ� SYS_ �ǻϤޤ��ΤϾõ��ʤ�)
+     SPAクリアー(項目名称が SYS_ で始まるものは消去されない)
 
-     ��  ����̵��
-     ����͡�̵��
+     引  数：無し
+     戻り値：無し
 
   o destroy_spa()
 
-     SPA�������ꥢ��
+     SPA完全クリアー
 
-     ��  ����̵��
-     ����͡�̵��
+     引  数：無し
+     戻り値：無し
+
+  o get_init_tran()
+
+     初期トランザクションコードの取得
+
+     引  数：無し
+     戻り値：トランザクションコード
+
+  o get_tran()
+
+     現在トランザクションコードの取得
+
+     引  数：無し
+     戻り値：トランザクションコード
+
+  o get_prev_tran()
+
+     呼出元トランザクションコードの取得
+
+     引  数：無し
+     戻り値：トランザクションコード
 
   o out_html(id, hash_param)
 
-     html���Ͻ���
+     html出力処理
 
-     ��  ����id ... html�ե�����ID
-             hash_param ... { ���� => ��, ...} (html����������)
-     ����͡����ơ����� ... true  : ����
-                            false : ����
+     引  数：id ... htmlファイルID
+             hash_param ... { 項目 => 値, ...} (htmlに埋め込む値)
+     戻り値：ステータス ... true  : 成功
+                            false : 失敗
 
-       ex. hash_param = { "key" => "value" } �ξ��
-           `#{id}.html' ��� `#{start_str}key#{end_str}' �� `value' ���֤������롣
+       ex. hash_param = { "key" => "value" } の場合
+           `#{id}.html' 中の `#{start_str}key#{end_str}' を `value' に置き換える。
 
-��˥塼�ڡ���(�ƤӽФ���)���������
+メニューページ(呼び出し元)を作成する
 ====================================
 
    1  <html>
    2  <head>
-   3  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
-   4  <title>��̳��˥塼</title>
+   3  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   4  <title>業務メニュー</title>
    5  </head>
    6  <body>
-   7  <div align="center"><h1>��̳��˥塼</h1></div>
+   7  <div align="center"><h1>業務メニュー</h1></div>
    8  <ul>
-   9  <li><a href="cgi-bin/cgictrl.cgi?SYS_init_tran=SAMP_CALC_ENTRY">�ߤ����ѡ�������Ѥ����</a>
+   9  <li><a href="cgi-bin/cgictrl.cgi?SYS_init_tran=SAMP_CALC_ENTRY">円の面積、球の体積を求める</a>
   10  </ul>
   11  </body>
   12  </html>
 
-  9�� : SYS_init_tran �˽���ȥ�󥶥������(SAMP_CALC_ENTRY)����ꤷ
-        ��cgictrl.cgi�ؤΥ�󥯤��Ѱդ��롣
+  9行 : SYS_init_tran に初期トランザクション(SAMP_CALC_ENTRY)を指定し
+        たcgictrl.cgiへのリンクを用意する。
 
-����¾
+その他
 ======
 
-�⤦�����ܳ�Ū��CGI�Υ���ץ�Ȥ��ơ�sampl_addr_*.cgi���Ѱդ��Ƥ��롣
-�������(�褯����)����Ͽ���ץꥱ�������ȤʤäƤ��ơ������� CRUD(Create, 
-Read, Update, Delete)��ǽ��������Ƥ��롣�ǡ����γ�Ǽ��� CSV�ե�����
-(/tmp/samp_addr.csv)�ʤΤǡ��ä��ɲä�DBMS���򥤥󥹥ȡ��뤹��ɬ�פ�̵
-����
+もう少し本格的なCGIのサンプルとして、sampl_addr_*.cgiを用意している。
+こちらは(よくある)住所録アプリケーションとなっていて、いわゆる CRUD(Create, 
+Read, Update, Delete)機能を実装している。データの格納先は CSVファイル
+(/tmp/samp_addr.csv)なので、特に追加でDBMS等をインストールする必要は無
+い。
 
 ---------+---------+---------+---------+---------+---------+---------+
 
-�ʾ塢���Ĥ��줵�ޤǤ�����
+以上、おつかれさまでした。
 
 

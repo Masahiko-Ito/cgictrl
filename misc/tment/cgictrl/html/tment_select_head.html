@@ -1,0 +1,93 @@
+#
+# html 定義
+#
+#  o `#'で始まる行はコメント行
+#  o ファイル名は 画面名称.html とする
+#  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+#    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+#    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+#  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+#  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+#    実行されない場合の既定値を指定したことになる。
+#  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+#    (START, END指定時は `@{', `}@'を指定文字列に変える事)
+#
+#    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+#
+#  o <form>には、action="cgictrl.cgiへのパス" を指定する。
+#
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Table maintenance for "@{table_name}@"(select)</title>
+
+<!-- script type="text/javascript" src="js/ajax_common.js"></script -->
+<!-- script type="text/javascript" src="js/ajax_security_common.js"></script -->
+<script type="text/javascript">
+<!--
+//============================================================
+//
+// [戻る]で戻って来たら強制的に元に進める
+//
+//============================================================
+//
+// ページのロード時に先に進める
+//
+window.history.forward()
+//------------------------------------------------------------
+//
+// loadイベント発生時に先に進める
+// firefoxではキャッシュからロードされた場合(たとえば
+// [戻る]で表示した場合)はloadイベントは発生しない。
+//
+window.onload = function (){
+	window.history.forward()
+}
+//------------------------------------------------------------
+//
+// pageshowイベント発生時に先に進める
+// キャッシュから表示された場合
+// firefoxにおいてはpageshowイベントが(キャッシュ
+// からロードされた場合も)発生する。
+//
+window.onpageshow = function (evt){
+	if (evt.persisted){
+		window.history.forward()
+	}
+}
+//------------------------------------------------------------
+//
+// onunloadイベントハンドラ登録(ダミー)。
+// firefoxでキャッシュを抑止するため。
+//
+window.onunload = function (){void(0)}
+
+//============================================================
+//
+// サブミット出来る状態か(true)否か(false)を調べる
+//
+//============================================================
+function check_submit(){
+	if (window.document.readyState != null && window.document.readyState != 'complete'){
+		return false;
+	}else{
+		return true;
+	}
+}
+// -->
+</script>
+
+</head>
+<body>
+<div align="left">
+[@{SYS_tran}@]
+</div>
+<div align="center"><h1>Table maintenance for "@{table_name}@"(select)</h1></div>
+<hr>
+<form method="post" action="./cgictrl.cgi">
+<input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+<div>
+<table border="1">

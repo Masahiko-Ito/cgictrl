@@ -1,0 +1,34 @@
+#
+# html 定義
+#
+#  o `#'で始まる行はコメント行
+#  o ファイル名は 画面名称.html とする
+#  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+#    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+#    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+#  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+#  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+#    実行されない場合の既定値を指定したことになる。
+#  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+#    (START, END指定時は `@{', `}@'を指定文字列に変える事)
+#
+#    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+#
+#  o <form>には、action="cgictrl.cgiへのパス" を指定する。
+#
+</table>
+</div>
+<div>
+<font color="@{msg_color=black}@">@{msg}@</font>
+</div>
+<hr>
+<div style="position:fixed; bottom:0em; left:0em; padding:3px; background:white; float:left; width:100%;">
+<!-- input type="submit" name="return" value="Return" onClick="return check_submit()" -->
+<input type="submit" name="select" value="Select" onClick="return check_submit()">
+<input type="submit" name="insert" value="Insert" onClick="return check_submit()">
+<input type="submit" name="update" value="Update" onClick="return check_submit()">
+<input type="submit" name="delete" value="Delete" onClick="return check_submit()">
+</div>
+</form>
+</body>
+</html>

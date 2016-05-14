@@ -1,2 +1,28 @@
-2006/07/07
- o �����꡼��(Ver. 0.1)
+2012/12/17 Ver. 0.2
+ o ruby-1.9系列での検証版。
+ o ドキュメント修正。
+ o cgictrl_common.rb内の@cgictrl_data_dirの既定値を変更。
+ o RES_ADDR内のRES_ADDRの既定値を修正。
+ o サンプルhtmlの<font>の閉じタグが</color>になっていたのを修正。
+ o popen(spawn_cgi_with_check()内)でオープンしたストリームにwriteした直後にclose_writeするように修正。
+ o out_html()内でSTDOUTに出力した直後にSTDOUT.flushするように修正。
+ o is_permitted()内でのfp.close忘れを修正。
+ o 禁止された[戻る]ボタンを利用した場合のエラーメッセージをcgictrl_common.rb内の@backward_deny_msgで
+   指定できるようにした。
+ o htmlファイル中に `@{SYS_tran}@' を記述した場合、それを自動的にトランザクションコードに置換するよう
+   にした。
+ o 呼び出し元トランザクションを取得するメソッド(get_prev_tran)を追加した。
+ o 現在トランザクションを取得するメソッド(get_tran)を追加した。
+ o 初期トランザクションを取得するメソッド(get_init_tran)を追加した。
+ o decode_log.sh(アクセスログデコードスクリプト)を追加した。
+ o cgictrl_common.rb内でumask値(007)を定義し、cgictrl.cgi内でumaskを設定するようにした。
+ o サンプルCGIとしてsqlite3のテーブルを汎用的にメンテナンスするプログラム(tment)を追加。
+ o 扱う文字コードをeuc-jpからutf-8に変更。それに伴い、ファイルの文字コードもutf-8に統一。
+ o get_raw_param()でCONTENT_LENGTH>0を判断するように修正。
+ o misc/tment 検索(select)時にlimit, offsetを指定できるように修正。
+ o サンプルのhtmlに<!DOCTYPE ...>を追加および一部スタイル指定を導入。
+
+2009/07/07 Ver. 0.1
+ o 初期リリース。
+ o ruby-1.8系列での検証版。
+

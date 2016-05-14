@@ -7,4 +7,4 @@
 RES_DUMMY1=/somewhere/hoge.txt
 RES_DUMMY2=/somewhere/fuga.txt
 RES_SAMP=/somewhere/dummy.txt
-RES_ADDR=/tmp/samp_addr.csv
+RES_ADDR=/home/_your_own_account_/cgictrl/tmp/samp_addr.csv

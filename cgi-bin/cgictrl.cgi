@@ -1,4 +1,5 @@
 #! /usr/bin/ruby
+# coding: utf-8
 #
 #----------------------------------------------------------------------
 # Copyright (C) 2009 Masahiko Ito
@@ -21,11 +22,11 @@
 # "Masahiko Ito" <m-ito@myh.no-ip.org>
 #----------------------------------------------------------------------
 #
-# cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+# cgictrl ver.0.2 2012.12.17 Masahiko Ito <m-ito@myh.no-ip.org>
 # 
 #   cgictrl.cgi : CGI control script
 #
-#   ex. <a href="http://foo.org/cgi-bin/cgictrl.cgi?SYS_init_tran=¥È¥é¥ó¥¶¥¯¥·¥ç¥óÌ¾">¥é¥Ù¥ë</a>
+#   ex. <a href="http://foo.org/cgi-bin/cgictrl.cgi?SYS_init_tran=ãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³å">ãƒ©ãƒ™ãƒ«</a>
 #
 require "cgi"
 require "uri"
@@ -33,10 +34,12 @@ require "nkf"
 require "cgictrl_common"
 #============================================================
 #
-# ¼ç½èÍı ÄêµÁ
+# ä¸»å‡¦ç† å®šç¾©
 #
 def	main()
 	cc = Cgictrl.new
+#
+	File.umask(cc.umask)
 #
 	cc.sweep_spa()
 #
@@ -65,7 +68,7 @@ def	main()
 end
 #------------------------------------------------------------
 #
-# ¥È¥é¥ó¥¶¥¯¥·¥ç¥óµ¯Æ°Á°½èÍı ÄêµÁ
+# ãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³èµ·å‹•å‰å‡¦ç† å®šç¾©
 #
 def pre_exec(cc, sessionid, flag)
 	cc.get_spa_all(sessionid)
@@ -76,7 +79,7 @@ def pre_exec(cc, sessionid, flag)
 end
 #------------------------------------------------------------
 #
-# ¥È¥é¥ó¥¶¥¯¥·¥ç¥óµ¯Æ°½èÍı ÄêµÁ
+# ãƒˆãƒ©ãƒ³ã‚¶ã‚¯ã‚·ãƒ§ãƒ³èµ·å‹•å‡¦ç† å®šç¾©
 #
 def exec(cc, tran)
 	array_res_mode = cc.get_res_from_tran(tran)
@@ -97,7 +100,7 @@ def exec(cc, tran)
 end
 #============================================================
 #
-# ¼ç½èÍı ¸Æ½Ğ¤·
+# ä¸»å‡¦ç† å‘¼å‡ºã—
 #
 main()
 #
