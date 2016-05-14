@@ -1,0 +1,628 @@
+cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+
+$$ 開発の手引 $$
+
+本文書では cgictrlのインストールから開発までを同梱のサンプルCGIを例に
+取って、順を追って具体的に説明する。
+
+インストール
+============
+
+  o tar xvzf cgictrl-0.1.tar.gz
+
+  o mkdir ~/cgictrl
+  o mkdir ~/cgictrl/html
+
+  o mkdir ~/cgictrl/lock
+  o mkdir ~/cgictrl/log
+  o mkdir ~/cgictrl/spa
+
+  o chmod ???? ~/cgictrl ~/cgictrl/html
+    httpサーバの権限で参照できるように設定する。
+  o chmod ???? ~/cgictrl/lock ~/cgictrl/log ~/cgictrl/spa
+    httpサーバの権限で更新できるように設定する。
+
+  o cp cgictrl-0.1/cgi-bin/* ~/public_html/cgi-bin/
+  o cp cgictrl-0.1/cgictrl/*.txt ~/cgictrl/
+  o cp cgictrl-0.1/cgictrl/html/* ~/cgictrl/html/
+
+開発手順
+========
+
+以下ではサンプルCGIとして同梱している 
+
+  o samp_calc_entry.cgi
+  o samp_calc_result.cgi
+
+を例として説明して行く。なお、本サンプル CGIは、円(球)の半径を入力し、
+その面積(体積)を求める簡単なプログラムである。
+
+~/cgictrl/resource.txt の設定
+=============================
+
+開発しようとするCGIアプリケーションで扱うリソースを定義する。排他制御
+の対称とする為には、このファイルに必ず登録する必要がある。
+
+  RES_SAMP=/somewhere/dummy.txt
+
+本サンプルCGIでは、排他対称制御の必要なリソースは取り扱わないが、一般
+的な開発手順になぞらえ、あえてリソース(ダミー)を定義している。
+
+~/cgictrl/tran2pgm.txt の設定
+=============================
+
+開発しようとするCGIアプリケーションを起動する為のトランザクションコー
+ドと、本トランザクションで排他対称とするリソースを定義する。
+
+  SAMP_CALC_ENTRY=/somewhere/cgi-bin/samp_calc_entry.cgi:RES_SAMP/A
+  SAMP_CALC_RESULT=/somewhere/cgi-bin/samp_calc_result.cgi:RES_SAMP/A
+
+もし cgictrl.cgiの存在するディレクトリに開発するCGIを納める場合は
+
+  SAMP_CALC_ENTRY=./samp_calc_entry.cgi:RES_SAMP/A
+  SAMP_CALC_RESULT=./samp_calc_result.cgi:RES_SAMP/A
+
+の様に、相対パスでの記述も可能である。
+
+本サンプルCGIでは、排他対称制御の必要なリソースは取り扱わないが、一般
+的な開発手順になぞらえ、あえてリソース(ダミー)を定義している。
+
+~/cgictrl/usertran.txt の設定
+=============================
+
+httpのユーザ認証機能(Basic認証、Digest認証等)により認証されたユーザに
+対して実行を許可するトランザクションを設定する。認証機能を利用しない場
+合は匿名ユーザ(anonymous)に対して許可するトランザクションを設定する必
+要がある。許可するトランザクションは正規表現で記述できる。
+
+  anonymous=SAMP_CALC_.*
+
+cgictrl_common.cgiでの既定値の見直し
+====================================
+
+サイトごとに必ず設定を見直すべき項目
+
+  o cgictrlが利用するデータディレクトリ。インストール時に作成したディ
+    レクトリを指定する。
+
+    @cgictrl_data_dir = "/home/.../cgictrl"
+  
+サイトの方針により設定を見直すべき項目
+
+  o https(ssl)通信に関する指定。
+
+    @force_https = "y" : https通信でなければエラーとする。
+    @force_https = "n" : http通信/https通信のどちらも許可する(既定値)。
+
+  o [戻る]ボタンの取り扱いに関する指定。
+
+    @backward_deny = "y" : [戻る]ボタンで遡ったページからの処理継続を
+                           禁止する(既定値)。
+    @backward_deny = "n" : [戻る]ボタンで遡ったページからの処理継続を
+                           禁止しない。
+
+  o formから入力されたデータに対して適応するnkf変換パラメータの指定。
+
+    @default_nkf_param = "-E -X -Z1 -e"
+
+  o <form>からの入力データのログ取得に関する指定。
+
+    @get_log_input_flag = "y" : ログに記録する(既定値)。
+    @get_log_input_flag = "n" : ログに記録しない。
+
+  o 出力した画面イメージのログ取得に関する指定。
+
+    @get_log_send_flag = "y" : ログに記録する(既定値)。
+    @get_log_send_flag = "n" : ログに記録しない。
+
+  o トランザクションの実行拒否のログ取得に関する指定。
+
+    @get_log_deny_flag = "y" : ログに記録する(既定値)。
+    @get_log_deny_flag = "n" : ログに記録しない。
+
+  o トランザクション中断エラーのログ取得に関する指定。
+
+    @get_log_error_flag = "y" : ログに記録する(既定値)。
+    @get_log_error_flag = "n" : ログに記録しない。
+
+  o 排他リトライ時の間隔(秒)。
+
+    @lock_sleep_sec = 1
+
+  o 排他リトライの上限回数。
+
+    @lock_retry_max = 60
+
+  o 指定時間(秒)より古いSPAファイルを削除対象とする。
+
+    @sweep_time_before = 2 * 24 * 60 * 60
+
+画面定義を作成する(~/cgictrl/html/*.html)
+=========================================
+
+samp_calc_entry.cgiの画面定義を ~/cgictrl/html/samp_calc_entry.html
+として作成する。
+
+   1  #
+   2  # html 定義
+   3  #
+   4  #  o `#'で始まる行はコメント行
+   5  #  o ファイル名は 画面名称.html とする
+   6  #  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+   7  #    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+   8  #    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+   9  #  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+  10  #  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+  11  #    実行されない場合の既定値を指定したことになる。
+  12  #  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+  13  #    (START, END指定時は `@{', `}@'を指定文字列に変える事)
+  14  #
+  15  #    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+  16  #
+  17  #  o <form>には、action="cgictrl.cgiへのパス" を指定する。
+  18  #
+  19  Content-Type: text/html; charset=EUC-JP
+  20  
+  21  <html>
+  22  <head>
+  23  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+  24  <title>円の面積、球の体積を求める(入力)</title>
+  25  </head>
+  26  <body>
+  27  <div align="center"><h1>円の面積、球の体積を求める(入力)</h1></div>
+  28  <form method="post" action="./cgictrl.cgi">
+  29  <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+  30  半径は？ : <input type="text" name="hankei" value="@{hankei}@"> センチメートル
+  31  <input type="submit" name="next" value="次へ">
+  32  </form>
+  33  <div>
+  34  <font color="@{msg_color=black}@">@{msg}@</color>
+  35  </div>
+  36  </body>
+  37  </html>
+
+  1〜18行 : `#'で始まる行はコメント行となる。
+  19行    : HTTPヘッダーの記述(必須)。コンテンツの文字コードを指定して
+            いる。
+  20行    : HTTPヘッダーの記述とHTMLの記述の間は改行で区切る必要がある。
+  21行    : html 開始タグ。
+  22行    : head 開始タグ。
+  23行    : metaタグで(も)コンテンツの文字コードを指定している。
+  24行    : titleタグにてタイトルを指定している。
+  25行    : head 閉じタグ。
+  26行    : body 開始タグ。
+  27行    : タイトルを行の中央に表示。
+  28行    : form 開始タグ。actionパラメータには常にcgictrl.cgiを呼び出す
+            ように指定する。
+  29行    : セッションID指定用のinputタグ(必須)。サンプルの通りに指定す
+            る。@{SYS_sessionid}@の部分がcgictrl.cgiにより置換される。
+  30行    : inputタグ。ユーザからの入力(半径)を受ける。@{hankei}@の部分
+            は samp_calc_entry.cgiから置換する。
+  31行    : inputタグ。送信ボタン(次へ)を表示する。
+  32行    : form 閉じタグ。
+  33行    : div 開始タグ。
+  34行    : メッセージ表示領域の定義。@{...}@の部分は、
+            samp_calc_entry.cgiから置換する。@{msg_color=black}@の記述で
+            は、この部分の既定値を black に指定している。
+  35行    : div 閉じタグ。
+  36行    : body 閉じタグ。
+  37行    : html 閉じタグ。
+
+samp_calc_result.cgiの画面定義を ~/cgictrl/html/samp_calc_result.html
+として作成する。
+
+   1  #
+   2  # html 定義
+   3  #
+   4  #  o `#'で始まる行はコメント行
+   5  #  o ファイル名は 画面名称.html とする
+   6  #  o START=置換対象文字列の指定開始文字列(未指定時は START=@\{ と見なす)
+   7  #    END=置換対象文字列の指定終了文字列(未指定時は END=\}@ と見なす)
+   8  #    START, ENDに指定する文字は本分中で使用しない文字を選んで指定する事。
+   9  #  o 置換対象は @{変数名}@ と記述する(START, END指定時は `@{', `}@'を指定文字列に変える事)
+  10  #  o 置換対象は @{変数名=既定値}@ と記述することもでき、この場合ユーザCGIから置換が
+  11  #    実行されない場合の既定値を指定したことになる。
+  12  #  o <form>〜</form>の間には必ず以下のinputタグを含める事。
+  13  #    (START, END指定時は `@{', `}@'を指定文字列に変える事)
+  14  #
+  15  #    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+  16  #
+  17  #  o <form>には、action="cgictrl.cgiへのパス" を指定する。
+  18  #
+  19  Content-Type: text/html; charset=EUC-JP
+  20  
+  21  <html>
+  22  <head>
+  23  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+  24  <title>円の面積、球の体積を求める(結果)</title>
+  25  </head>
+  26  <body>
+  27  <div align="center"><h1>円の面積、球の体積を求める(結果)</h1></div>
+  28  <form method="post" action="./cgictrl.cgi">
+  29  <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+  30  <div>
+  31  半径が@{hankei}@センチメートルの円の面積は@{menseki}@平方センチメートルです。
+  32  </div>
+  33  <div>
+  34  半径が@{hankei}@センチメートルの球の体積は@{taiseki}@立方センチメートルです。
+  35  </div>
+  36  <div>
+  37  <input type="submit" name="return" value="戻る">
+  38  </div>
+  39  </form>
+  40  <div>
+  41  <font color="@{msg_color=black}@">@{msg}@</color>
+  42  </div>
+  43  </body>
+  44  </html>
+
+解説は省略。
+
+CGIプログラムを作成する
+=======================
+
+cgictrl配下のCGIプログラムは一定のロジックが定められる。ユーザは自分で
+スクラッチからコーディングする事も可能ではあるが、同梱されているスケル
+トン(骨組み)CGIである skeleton.cgi をコピーしてコーディングする事を推奨
+する。
+
+samp_calc_entry.cgi(半径の入力を受け付けるCGI)を作成する。
+
+    1  #! /usr/bin/ruby
+    2  #
+    3  # cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+    4  #
+    5  #   ユーザコーディングサンプルスクリプト
+    6  #
+    7  require "cgi"
+    8  require "uri"
+    9  require "nkf"
+   10  require "cgictrl_common"
+   11  #--- user coding start ---
+   12  #--- user coding end   ---
+   13  #
+   14  # メイン処理
+   15  #
+   16  def main()
+   17          cc = Cgictrl.new
+   18          cc.start(cc.default_nkf_param)
+   19          sub_open(cc)
+   20          if (cc.is_send())
+   21                  next_tran = sub_send(cc)
+   22          else
+   23                  next_tran = sub_recieve(cc)
+   24          end
+   25          sub_close(cc)
+   26          cc.end(next_tran)
+   27          exit 0
+   28  end
+   29  #
+   30  # オープン処理
+   31  #
+   32  #    o DB接続 etc
+   33  #
+   34  def sub_open(cc)
+   35  #--- user coding start ---
+   36  #--- user coding end   ---
+   37  end
+   38  #
+   39  # 画面編集処理
+   40  #
+   41  #   o spaにより渡されたデータを元に画面を編集する
+   42  #   o 次に起動するトランザクション(通常は自トランザクションと同じ)を返す
+   43  #
+   44  def sub_send(cc)
+   45  #--- user coding start ---
+   46          html_param = {}
+   47  
+   48          html_param["hankei"] = cc.get_spa("hankei")
+   49  
+   50          if (cc.get_spa("err_sw") == "ER01")
+   51                  html_param["msg_color"] = "red"
+   52                  html_param["msg"] = "数字を入力して下さい"
+   53          end
+   54  
+   55          cc.out_html("samp_calc_entry", html_param)
+   56  
+   57          return "SAMP_CALC_ENTRY"
+   58  #--- user coding end   ---
+   59  end
+   60  #
+   61  # 入力データ処理
+   62  #
+   63  #   o 入力データを処理する
+   64  #   o 次のトランザクションに渡すデータをspaにセットする
+   65  #   o 次に起動するトランザクションを返す
+   66  #
+   67  def sub_recieve(cc)
+   68  #--- user coding start ---
+   69          cc.set_spa("err_sw", "")
+   70  
+   71          r = cc.get_input("hankei") 
+   72          r.strip!
+   73          if (/^[+-]*[0-9\.]+$/ !~ r)
+   74                  cc.set_spa("err_sw", "ER01")
+   75          end
+   76  
+   77          cc.set_spa("hankei", r)
+   78  
+   79          if (cc.get_spa("err_sw") == "")
+   80                  return "SAMP_CALC_RESULT"
+   81          else
+   82                  return "SAMP_CALC_ENTRY"
+   83          end
+   84  #--- user coding end   ---
+   85  end
+   86  #
+   87  # クローズ処理
+   88  #
+   89  #    o DB切断 etc
+   90  #
+   91  def sub_close(cc)
+   92  #--- user coding start ---
+   93  #--- user coding end   ---
+   94  end
+   95  #
+   96  # その他のユーザ関数定義
+   97  #
+   98  #--- user coding start ---
+   99  #--- user coding end   ---
+  100  #
+  101  # メイン処理開始
+  102  #
+  103  main()
+
+原則、
+
+  #--- user coding start ---
+  #--- user coding end   ---
+
+の範囲にコーディングを行う。
+
+  11行〜12行 : 個別に必要なライブラリの読み込み(require)や、大局変数の定
+               義を行う。本サンプルではコーディング無し。
+  35行〜36行 : 起動時に必ず呼ばれるルーチン(sub_open)の定義。データベー
+               スへの接続処理等のコーディングを想定している。本サンプル
+               ではコーディング無し。
+  45行〜58行 : 本CGIがcgictrl.cgiより[画面作成処理]として起動された場合
+               に呼び出されるルーチン(sub_send)の定義。
+  
+        46行 : 画面を出力するメソッド(out_html)へ引き渡す置換パラメータ
+               の初期化。
+        48行 : 画面より入力された半径をspaエリアから取り込み、置換パラメー
+               タに設定する。
+  50行〜53行 : SPAエリアのerr_swを判断し、メッセージの色とメッセージ内容
+               を置換パラメータに設定する。
+        55行 : 画面出力メソッド(out_html)を呼び出す。
+        57行 : 次に呼び出すトランザクションコードを返す。原則、sub_send
+               ルーチンにおいては自トランザクション(SAMP_CALC_ENTRY)を指
+               定する。
+  
+  68行〜84行 : 本CGIがcgictrl.cgiより[入力処理]として起動された場合に呼
+               び出されるルーチン(sub_recieve)の定義。
+  
+        69行 : データ入力チェックに先立って、SPAのerr_swをクリアしておく。
+        71行 : 入力された半径を取り込む。
+        72行 : 末尾の改行文字を取り除く(念のため)。
+  73行〜75行 : 数値(ぽい)データで無ければSPAのerr_swにエラーコードを設定
+               する。
+        77行 : 半径を次のトランザクションに受け渡すためにSPA領域にセット
+               する。
+  79行〜83行 : 入力にエラーが無ければ次回起動トランザクションに 
+               SAMP_CALC_RESULT を返し、エラーが有れば(再入力をうながす
+               為に) SAMP_CALC_ENTRY(自トランザクション) を返す。
+  
+  92行〜93行 : 終了時に必ず呼ばれるルーチン(sub_close)の定義。データベー
+               スの切断処理等のコーディングを想定している。本サンプルで
+               はコーディング無し。
+  98行〜99行 : ユーザ関数の定義領域。本サンプルではコーディング無し。
+
+samp_calc_result.cgi(面積、体積を計算し表示するCGI)を作成する。
+
+   1  #! /usr/bin/ruby
+   2  #
+   3  # cgictrl ver.0.1 2009.07.07 Masahiko Ito <m-ito@myh.no-ip.org>
+   4  #
+   5  #   ユーザコーディングサンプルスクリプト
+   6  #
+   7  require "cgi"
+   8  require "uri"
+   9  require "nkf"
+  10  require "cgictrl_common"
+  11  #--- user coding start ---
+  12  #--- user coding end   ---
+  13  #
+  14  # メイン処理
+  15  #
+  16  def main()
+  17          cc = Cgictrl.new
+  18          cc.start(cc.default_nkf_param)
+  19          sub_open(cc)
+  20          if (cc.is_send())
+  21                  next_tran = sub_send(cc)
+  22          else
+  23                  next_tran = sub_recieve(cc)
+  24          end
+  25          sub_close(cc)
+  26          cc.end(next_tran)
+  27          exit 0
+  28  end
+  29  #
+  30  # オープン処理
+  31  #
+  32  #    o DB接続 etc
+  33  #
+  34  def sub_open(cc)
+  35  #--- user coding start ---
+  36  #--- user coding end   ---
+  37  end
+  38  #
+  39  # 画面編集処理
+  40  #
+  41  #   o spaにより渡されたデータを元に画面を編集する
+  42  #   o 次に起動するトランザクション(通常は自トランザクションと同じ)を返す
+  43  #
+  44  def sub_send(cc)
+  45  #--- user coding start ---
+  46          pi = 3.14
+  47          html_param = {}
+  48          html_param["hankei"] = cc.get_spa("hankei")
+  49          html_param["menseki"] = pi * cc.get_spa("hankei").to_f ** 2
+  50          html_param["taiseki"] = 4.0 / 3.0 * pi * cc.get_spa("hankei").to_f ** 3
+  51  
+  52          cc.out_html("samp_calc_result", html_param)
+  53  
+  54          return "SAMP_CALC_RESULT"
+  55  #--- user coding end   ---
+  56  end
+  57  #
+  58  # 入力データ処理
+  59  #
+  60  #   o 入力データを処理する
+  61  #   o 次のトランザクションに渡すデータをspaにセットする
+  62  #   o 次に起動するトランザクションを返す
+  63  #
+  64  def sub_recieve(cc)
+  65  #--- user coding start ---
+  66          cc.set_spa("err_sw", "")
+  67  
+  68          return "SAMP_CALC_ENTRY"
+  69  #--- user coding end   ---
+  70  end
+  71  #
+  72  # クローズ処理
+  73  #
+  74  #    o DB切断 etc
+  75  #
+  76  def sub_close(cc)
+  77  #--- user coding start ---
+  78  #--- user coding end   ---
+  79  end
+  80  #
+  81  # その他のユーザ関数定義
+  82  #
+  83  #--- user coding start ---
+  84  #--- user coding end   ---
+  85  #
+  86  # メイン処理開始
+  87  #
+  88  main()
+
+解説は省略。
+
+Cgictrl classに定義されているメソッド
+=====================================
+
+主にユーザCGIで利用するメソッドを紹介する。
+
+  o get_realres(res)
+
+     リソース実体取得
+
+     引  数：res ... リソースID
+     戻り値：リソースの実体を表す文字列
+
+  o get_input(key)
+
+     インプットデータ取得
+
+     引  数：key ... 項目名称
+     戻り値：項目に対する値(数値データも含めて全て文字列として返ります)
+
+  o set_input(key, value)
+
+     インプットデータ設定
+
+     引  数：key ... 項目名称
+             value ... 項目に対して設定する値
+     戻り値：無し
+
+  o get_input_file(key)
+
+     インプットファイルデータ取得
+
+     引  数：key ... 項目名称
+     戻り値：項目に対する値
+
+  o set_input_file(key, value)
+
+     インプットファイルデータ設定
+
+     引  数：key ... 項目名称
+             value ... 項目に対して設定する値
+     戻り値：無し
+
+  o get_spa(key)
+
+     SPAデータ取得
+
+     引  数：key ... 項目名称
+     戻り値：項目に対する値(数値データも含めて全て文字列として返ります)
+
+  o set_spa(key, value)
+
+     SPAデータ設定
+
+     引  数：key ... 項目名称
+             value ... 項目に対して設定する値
+     戻り値：無し
+
+  o clear_spa()
+
+     SPAクリアー(項目名称が SYS_ で始まるものは消去されない)
+
+     引  数：無し
+     戻り値：無し
+
+  o destroy_spa()
+
+     SPA完全クリアー
+
+     引  数：無し
+     戻り値：無し
+
+  o out_html(id, hash_param)
+
+     html出力処理
+
+     引  数：id ... htmlファイルID
+             hash_param ... { 項目 => 値, ...} (htmlに埋め込む値)
+     戻り値：ステータス ... true  : 成功
+                            false : 失敗
+
+       ex. hash_param = { "key" => "value" } の場合
+           `#{id}.html' 中の `#{start_str}key#{end_str}' を `value' に置き換える。
+
+メニューページ(呼び出し元)を作成する
+====================================
+
+   1  <html>
+   2  <head>
+   3  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+   4  <title>業務メニュー</title>
+   5  </head>
+   6  <body>
+   7  <div align="center"><h1>業務メニュー</h1></div>
+   8  <ul>
+   9  <li><a href="cgi-bin/cgictrl.cgi?SYS_init_tran=SAMP_CALC_ENTRY">円の面積、球の体積を求める</a>
+  10  </ul>
+  11  </body>
+  12  </html>
+
+  9行 : SYS_init_tran に初期トランザクション(SAMP_CALC_ENTRY)を指定し
+        たcgictrl.cgiへのリンクを用意する。
+
+その他
+======
+
+もう少し本格的なCGIのサンプルとして、sampl_addr_*.cgiを用意している。
+こちらは(よくある)住所録アプリケーションとなっていて、いわゆる CRUD(Create, 
+Read, Update, Delete)機能を実装している。データの格納先は CSVファイル
+(/tmp/samp_addr.csv)なので、特に追加でDBMS等をインストールする必要は無
+い。
+
+---------+---------+---------+---------+---------+---------+---------+
+
+以上、おつかれさまでした。
+
+

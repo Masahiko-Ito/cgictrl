@@ -1,0 +1,10 @@
+#
+# resource_id=real_resource
+#
+##SPADIR=/home/m-ito/cgictrl/spa
+##LOGFILE=/home/m-ito/cgictrl/log/alternate_log.txt
+##LOGFILE=/dev/null
+RES_DUMMY1=/somewhere/hoge.txt
+RES_DUMMY2=/somewhere/fuga.txt
+RES_SAMP=/somewhere/dummy.txt
+RES_ADDR=/tmp/samp_addr.csv

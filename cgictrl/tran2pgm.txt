@@ -1,0 +1,23 @@
+#
+# トランザクション-プログラム 対応テーブル
+#
+#   o `#'で始まる行はコメント行
+#   o トランザクション名=プログラムへのパス:リソース/アクセスモード[,リソース/アクセスモード]
+#
+#TEST=/home/m-ito/public_html/RubyFrameWork/cgi-bin/cgictrl_test.cgi:RES_DUMMY1/A,RES_DUMMY2/A
+#SAMP_CALC_ENTRY=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_calc_entry.cgi:RES_SAMP/A
+#SAMP_CALC_RESULT=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_calc_result.cgi:RES_SAMP/A
+#SAMP_ADDR_TOP=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_addr_top.cgi:RES_ADDR/A
+#SAMP_ADDR_CREATE=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_addr_create.cgi:RES_ADDR/A
+#SAMP_ADDR_READ=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_addr_read.cgi:RES_ADDR/A
+#SAMP_ADDR_UPDATE=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_addr_update.cgi:RES_ADDR/A
+#SAMP_ADDR_DELETE=/home/m-ito/public_html/RubyFrameWork/cgi-bin/samp_addr_delete.cgi:RES_ADDR/A
+#
+TEST=./cgictrl_test.cgi:RES_DUMMY1/A,RES_DUMMY2/A
+SAMP_CALC_ENTRY=./samp_calc_entry.cgi:RES_SAMP/A
+SAMP_CALC_RESULT=./samp_calc_result.cgi:RES_SAMP/A
+SAMP_ADDR_TOP=./samp_addr_top.cgi:RES_ADDR/A
+SAMP_ADDR_CREATE=./samp_addr_create.cgi:RES_ADDR/A
+SAMP_ADDR_READ=./samp_addr_read.cgi:RES_ADDR/A
+SAMP_ADDR_UPDATE=./samp_addr_update.cgi:RES_ADDR/A
+SAMP_ADDR_DELETE=./samp_addr_delete.cgi:RES_ADDR/A
