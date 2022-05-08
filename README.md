@@ -16,13 +16,13 @@ with these programs; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 Mail suggestions and bug reports for these programs to
-"Masahiko Ito" <m-ito@myh.no-ip.org>
+"Masahiko Ito" \<m-ito@myh.no-ip.org\>
 
 ## これは何?
 ruby言語を使ってWebアプリケーションを作る時に利用するフレームワークの
 一種です。
 
-##機能とか特徴とか
+## 機能とか特徴とか
 
 rubyのフレームワークと言えば **Ruby on Rails** とかが真っ先に思い浮かぶ
 と思うのですが、この **cgictrl** の方向性は、それらとはかなり違ったもの
@@ -55,7 +55,7 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
 ### セッション管理機能。
 
-  <input type="hidden" ...>によりセッションIDを受渡し、そのセッションID
+  \<input type="hidden" ...\>によりセッションIDを受渡し、そのセッションID
   を基にしてセッション管理を行う。
 
 ### 排他制御機能。
@@ -70,14 +70,13 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
 ### 画面から入力されたデータのロギング機能。
 
-  <form>から入力されたデータをログファイルに記録する。
+  \<form\>から入力されたデータをログファイルに記録する。
 
 ### 画面に表示した内容のロギング機能。
 
   表示した画面(htmlイメージ)を、そのままログファイルに記録する。
 
-### httpサーバの持つ認証機能により認証されたユーザに対するトランザクショ
-  ン制御機能。また、トランザクション実行拒否情報のロギング機能。
+### httpサーバの持つ認証機能により認証されたユーザに対するトランザクション制御機能。また、トランザクション実行拒否情報のロギング機能。
 
   ユーザIDに対して許可するトランザクションを正規表現を使って定義するこ
   とができる。
@@ -108,15 +107,19 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   * mkdir ~/cgictrl/spa
   * mkdir ~/cgictrl/tmp
   * chmod ???? \~/cgictrl \~/cgictrl/html
+
     httpサーバの権限で参照できるように設定する。
   * chmod ???? \~/cgictrl/lock \~/cgictrl/log \~/cgictrl/spa \~/cgictrl/tmp
+
     httpサーバの権限で更新できるように設定する。
   * cp cgictrl-0.4/cgi-bin/* \~/public_html/cgi-bin/
-  * cp cgictrl-0.4/cgictrl/*.txt ~/cgictrl/
+  * cp cgictrl-0.4/cgictrl/*.txt \~/cgictrl/
   * cp cgictrl-0.4/cgictrl/html/* \~/cgictrl/html/
   * vi \~/public_html/cgi-bin/cgictrl_common.rb
+
     @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"
   * vi ~/cgictrl/resource.txt
+
     RES_ADDR=/home/自分のアカウント/cgictrl/tmp/samp_addr.csv
 
 ## 使い方
