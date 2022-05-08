@@ -106,17 +106,19 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   * mkdir ~/cgictrl/log
   * mkdir ~/cgictrl/spa
   * mkdir ~/cgictrl/tmp
-  * chmod ???? \~/cgictrl \~/cgictrl/html  
-    httpサーバの権限で参照できるように設定する。
-  * chmod ???? \~/cgictrl/lock \~/cgictrl/log \~/cgictrl/spa \~/cgictrl/tmp  
-    httpサーバの権限で更新できるように設定する。
+  * chmod ???? \~/cgictrl \~/cgictrl/html # httpサーバの権限で参照できるように設定する。
+  * chmod ???? \~/cgictrl/lock \~/cgictrl/log \~/cgictrl/spa \~/cgictrl/tmp # httpサーバの権限で更新できるように設定する。
   * cp cgictrl-0.4/cgi-bin/\* \~/public_html/cgi-bin/
   * cp cgictrl-0.4/cgictrl/\*.txt \~/cgictrl/
   * cp cgictrl-0.4/cgictrl/html/\* \~/cgictrl/html/
   * vi \~/public_html/cgi-bin/cgictrl_common.rb  
+```
     @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"
+```
   * vi \~/cgictrl/resource.txt  
+```
     RES_ADDR=/home/自分のアカウント/cgictrl/tmp/samp_addr.csv
+```
 
 ## 使い方
 
@@ -215,70 +217,126 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
   * サイトごとに必ず設定を見直すべき項目
     - cgictrlが利用するデータディレクトリ。  
+```
       @cgictrl_data_dir = "/home/_your_own_account_/cgictrl"
+```
   * サイトの方針により設定を見直すべき項目
     - https(ssl)通信を強制しない。  
+```
       @force_https = "n"
+```
     - [戻る]ボタンで遡ったページからの処理継続を禁止する。  
+```
       @backward_deny = "y"
+```
     - 禁止された[戻る]ボタンを利用した場合、画面の遷移を止める。  
+```
       @backward_deny_msg = "Status: 204 No Response\n\n"
+```
     - nkf変換パラメータ。  
+```
       @default_nkf_param = "-W -X -Z1 -w"
+```
     - \<form\>からの入力データをログファイルに残す。  
+```
       @get_log_input_flag = "y"
+```
     - stdoutに出力したデータをログファイルに残す。  
+```
       @get_log_send_flag = "y"
+```
     - トランザクションの実行拒否をログファイルに残す。  
+```
       @get_log_deny_flag = "y"
+```
     - トランザクションを中断するエラーメッセージをログファイルに残す。  
+```
       @get_log_error_flag = "y"
+```
     - 排他リトライ時の間隔(秒)。  
+```
       @lock_sleep_sec = 1
+```
     - 排他リトライの回数。  
+```
       @lock_retry_max = 60
+```
     - 指定時間(秒)より古いSPAファイルを削除対象とする。  
+```
       @sweep_time_before = 2 * 24 * 60 * 60
+```
     - umask値  
+```
       @umask = 007
+```
   * 既定値のまま運用する事が望ましい項目
 
     - トランザクション to プログラム変換テーブルファイル。  
+```
       @tran2pgm_file = @cgictrl_data_dir + "/" + "tran2pgm.txt"
+```
     - ユーザ to トランザクション許可ファイル。  
+```
       @usertran_file = @cgictrl_data_dir + "/" + "usertran.txt"
+```
     - 排他対象リソース登録ファイル。  
+```
       @resource_file = @cgictrl_data_dir + "/" + "resource.txt"
+```
     - htmlファイル格納ディレクトリ。  
+```
       @html_dir = @cgictrl_data_dir + "/" + "html"
+```
     - cgictrlシステムエラー画面htmlファイルのID。  
+```
       @error_msg_id = "cgictrl_error"
+```
     - cgictrlシステムエラー画面htmlファイル中のメッセージ項目名称。  
+```
       @error_msg_string = "error_message"
+```
     - 排他制御用の親ディレクトリ。  
+```
       @lock_parent_dir = @cgictrl_data_dir + "/" + "lock"
+```
     - 排他制御ディレクトリのフォーマット。  
+```
       @lock_dir_format = "%s.dir"
+```
     - 排他制御ファイル。  
+```
       @lock_file = "lock.txt"
+```
     - htmlファイル中の項目開始文字列名称、終了文字列名称。  
+```
       @html_start_param = "START"  
       @html_end_param = "END"  
+```
     - htmlファイル中の項目開始文字列、終了文字列。  
+```
       @html_start_default = "@\{"  
       @html_end_default = "\}@" 
+```
     - htmlファイル中にトランザクションコードを埋め込む際の文字列名称。  
+```
       @html_tran_key = "SYS_tran"
+```
     - htmlファイル中の項目開始文字列、終了文字列の最終的な値の16進文字列。  
+```
       @start_str_hex = "01"  
       @end_str_hex = "02" 
+```
     - ログ記録ファイルのリソースID、格納ディレクトリ、ファイル実体。 
+```
       @log_file_res = "LOGFILE"  
       @log_dir = @cgictrl_data_dir + "/" + "log"  
       @log_file = @log_dir + "/" + "log.txt"
+```
     - SPA(Scratch Pad Area)ファイル格納ディレクトリ、リソースID。  
+```
       @spa_dir_res = "SPADIR"  
       @spa_dir = @cgictrl_data_dir + "/" + "spa"
+```
 
 ## 起動方法
 
@@ -295,11 +353,15 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   通常のhtmlファイルと異なる部分は、
 
   - httpヘッダーも含めて記述する。 
-    ex. Content-Type: text/html; charset=utf-8
+```
+    Content-Type: text/html; charset=utf-8
+```
   - \<form\>〜\</form\>の間に必ず以下のインプットタグ(セッションID設定用)を記 
     述する。原則、<input type="hidden" ...>は下記以外に使用しない事を推奨
     する(ページ間で受け渡す必要の有るデータはSPAを利用することで可能)。 
+```
     \<input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@"\>
+```
   - 出力時に埋め込む部分は、下記
     のように記述し、プログラムから out_html メソッドで置き換えて出力する。
     out_htmlメソッドによる置き換えを行わない項目については、前者の指定の
@@ -311,10 +373,10 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
     開始文字列と終了文字列を指定する事ができる。通常この指定はhttpヘッダー
     よりも先に指定する事を推奨する。文字列中に正規表現上の特殊文字を含む
     場合は、**\\** によりエスケープする必要がある。未指定時(デフォルト値)は
-
-        * START=@\{
-        * END=\}@
-
+```
+        START=@\{
+        END=\}@
+```
     となっている。
   - START, ENDに指定する文字列は意図せぬ置換を防ぐために、html本文中に現
     れてはいけない。しかし、どうしても記述せざるを得ない場合は &#xxx; 等
