@@ -106,8 +106,7 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   * mkdir ~/cgictrl/log
   * mkdir ~/cgictrl/spa
   * mkdir ~/cgictrl/tmp
-  * chmod ???? \~/cgictrl \~/cgictrl/html
-
+  * chmod ???? \~/cgictrl \~/cgictrl/html 
     httpサーバの権限で参照できるように設定する。
   * chmod ???? \~/cgictrl/lock \~/cgictrl/log \~/cgictrl/spa \~/cgictrl/tmp
 
@@ -149,7 +148,7 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
 ## 制御CGIプログラム
 
-  * cgictrl.cgi        : <form action="...">により、ユーザが直接起動する
+  * cgictrl.cgi        : \<form action="..."\>により、ユーザが直接起動する
                          CGIプログラム(MVCのCに相当する部分)。実際にユー
                          ザが作成する業務CGIプログラム(MVCのMに相当する
                          部分)は直接呼び出す事をせずに、常にこのcgictrl.cgi
@@ -171,14 +170,14 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   * 特殊なリソースID (cgictrl内部で利用するので、ユーザのリソースIDと
                       して利用してはいけない)
 
-    `LOGFILE' はアクセスログファイルを示し、このリソースIDに対する実体
+    **LOGFILE** はアクセスログファイルを示し、このリソースIDに対する実体
     名称は実際にhttpデーモンの権限で書き込み可能なファイルである必要が
     有る。ただし、resource.txt中で指定されない場合は cgictrl_common.rb
     中のinitializeメソッドにハードコーディングされたログファイルが出力
     先となるので、一時的に出力先を変更したい等の特別な事情がなければ、
     あえてresource.txt中で指定する必要は無い。
 
-    `SPADIR' はSPAを格納するディレクトリを示し、このリソースIDに対する
+    **SPADIR** はSPAを格納するディレクトリを示し、このリソースIDに対する
     実体名称は実際にhttpデーモンの権限で書き込み可能なディレクトリであ
     る必要が有る。ただし、resource.txt中で指定されない場合は 
     cgictrl_common.rb 中のinitializeメソッドにハードコーディングされた 
@@ -212,78 +211,106 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   httpサーバの認証機能(Basic認証等)により認証されたユーザIDに対して
   許可するトランザクションを登録する。
 
-  認証機能を利用しない場合、ユーザIDには `anonymous' が設定されるの
-  で、許可するトランザクションは `anonymous' に対して設定する。
+  認証機能を利用しない場合、ユーザIDには **anonymous** が設定されるの
+  で、許可するトランザクションは **anonymous** に対して設定する。
 
 ## cgictrl_common.cgiでの各種既定値定義。
 
   * サイトごとに必ず設定を見直すべき項目
 
     - cgictrlが利用するデータディレクトリ。
+
       @cgictrl_data_dir = "/home/_your_own_account_/cgictrl"
 
   * サイトの方針により設定を見直すべき項目
     - https(ssl)通信を強制しない。
+
       @force_https = "n"
     - [戻る]ボタンで遡ったページからの処理継続を禁止する。
+
       @backward_deny = "y"
     - 禁止された[戻る]ボタンを利用した場合、画面の遷移を止める。
+
       @backward_deny_msg = "Status: 204 No Response\n\n"
     - nkf変換パラメータ。
+
       @default_nkf_param = "-W -X -Z1 -w"
     - <form>からの入力データをログファイルに残す。
+
       @get_log_input_flag = "y"
     - stdoutに出力したデータをログファイルに残す。
+
       @get_log_send_flag = "y"
     - トランザクションの実行拒否をログファイルに残す。
+
       @get_log_deny_flag = "y"
     - トランザクションを中断するエラーメッセージをログファイルに残す。
+
       @get_log_error_flag = "y"
     - 排他リトライ時の間隔(秒)。
+
       @lock_sleep_sec = 1
     - 排他リトライの回数。
+
       @lock_retry_max = 60
     - 指定時間(秒)より古いSPAファイルを削除対象とする。
+
       @sweep_time_before = 2 * 24 * 60 * 60
     - umask値
+
       @umask = 007
 
   * 既定値のまま運用する事が望ましい項目
 
     - トランザクション to プログラム変換テーブルファイル。
+
       @tran2pgm_file = @cgictrl_data_dir + "/" + "tran2pgm.txt"
     - ユーザ to トランザクション許可ファイル。
+
       @usertran_file = @cgictrl_data_dir + "/" + "usertran.txt"
     - 排他対象リソース登録ファイル。
+
       @resource_file = @cgictrl_data_dir + "/" + "resource.txt"
     - htmlファイル格納ディレクトリ。
+
       @html_dir = @cgictrl_data_dir + "/" + "html"
     - cgictrlシステムエラー画面htmlファイルのID。
+
       @error_msg_id = "cgictrl_error"
     - cgictrlシステムエラー画面htmlファイル中のメッセージ項目名称。
+
       @error_msg_string = "error_message"
     - 排他制御用の親ディレクトリ。
+
       @lock_parent_dir = @cgictrl_data_dir + "/" + "lock"
     - 排他制御ディレクトリのフォーマット。
+
       @lock_dir_format = "%s.dir"
     - 排他制御ファイル。
+
       @lock_file = "lock.txt"
     - htmlファイル中の項目開始文字列名称、終了文字列名称。
+
       @html_start_param = "START"
       @html_end_param = "END"
     - htmlファイル中の項目開始文字列、終了文字列。
+
       @html_start_default = "@\{"
       @html_end_default = "\}@"
     - htmlファイル中にトランザクションコードを埋め込む際の文字列名称。
+
       @html_tran_key = "SYS_tran"
     - htmlファイル中の項目開始文字列、終了文字列の最終的な値の16進文字列。
+
       @start_str_hex = "01"
       @end_str_hex = "02"
     - ログ記録ファイルのリソースID、格納ディレクトリ、ファイル実体。
+
       @log_file_res = "LOGFILE"
       @log_dir = @cgictrl_data_dir + "/" + "log"
       @log_file = @log_dir + "/" + "log.txt"
     - SPA(Scratch Pad Area)ファイル格納ディレクトリ、リソースID。
+
       @spa_dir_res = "SPADIR"
       @spa_dir = @cgictrl_data_dir + "/" + "spa"
 
@@ -305,11 +332,11 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
     ex. Content-Type: text/html; charset=utf-8
 
-  - <form>〜</form>の間に必ず以下のインプットタグ(セッションID設定用)を記
+  - \<form\>〜\</form\>の間に必ず以下のインプットタグ(セッションID設定用)を記
     述する。原則、<input type="hidden" ...>は下記以外に使用しない事を推奨
     する(ページ間で受け渡す必要の有るデータはSPAを利用することで可能)。
 
-    <input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@">
+    \<input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@"\>
 
   - 出力時に埋め込む部分は、
 
@@ -508,4 +535,4 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 ションの開発現場で苦労されている開発者方の手助けとなれば幸いです。
 
 -- 
-Masahiko Ito <m-ito@myh.no-ip.org>
+Masahiko Ito \<m-ito@myh.no-ip.org\>
