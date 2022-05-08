@@ -1,5 +1,4 @@
-# cgictrl ver.0.4 2012.12.19 Masahiko Ito <m-ito@myh.no-ip.org>
-```
+# cgictrl ver.0.4 2012.12.19 Masahiko Ito \<m-ito@myh.no-ip.org\>
 Copyright (C) 2009 Masahiko Ito
   
 These programs is free software; you can redistribute it and/or modify  
@@ -18,7 +17,6 @@ with these programs; if not, write to the Free Software Foundation, Inc.,
 
 Mail suggestions and bug reports for these programs to
 "Masahiko Ito" <m-ito@myh.no-ip.org>
-```
 
 ## これは何?
 ruby言語を使ってWebアプリケーションを作る時に利用するフレームワークの
