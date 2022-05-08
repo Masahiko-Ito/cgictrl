@@ -106,16 +106,16 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
   * mkdir ~/cgictrl/log
   * mkdir ~/cgictrl/spa
   * mkdir ~/cgictrl/tmp
-  * chmod ???? \~/cgictrl \~/cgictrl/html 
+  * chmod ???? \~/cgictrl \~/cgictrl/html  
     httpサーバの権限で参照できるように設定する。
-  * chmod ???? \~/cgictrl/lock \~/cgictrl/log \~/cgictrl/spa \~/cgictrl/tmp 
+  * chmod ???? \~/cgictrl/lock \~/cgictrl/log \~/cgictrl/spa \~/cgictrl/tmp  
     httpサーバの権限で更新できるように設定する。
-  * cp cgictrl-0.4/cgi-bin/* \~/public_html/cgi-bin/
-  * cp cgictrl-0.4/cgictrl/*.txt \~/cgictrl/
-  * cp cgictrl-0.4/cgictrl/html/* \~/cgictrl/html/
-  * vi \~/public_html/cgi-bin/cgictrl_common.rb 
+  * cp cgictrl-0.4/cgi-bin/\* \~/public_html/cgi-bin/
+  * cp cgictrl-0.4/cgictrl/\*.txt \~/cgictrl/
+  * cp cgictrl-0.4/cgictrl/html/\* \~/cgictrl/html/
+  * vi \~/public_html/cgi-bin/cgictrl_common.rb  
     @cgictrl_data_dir = "/home/自分のアカウント/cgictrl"
-  * vi \~/cgictrl/resource.txt 
+  * vi \~/cgictrl/resource.txt  
     RES_ADDR=/home/自分のアカウント/cgictrl/tmp/samp_addr.csv
 
 ## 使い方
@@ -135,7 +135,7 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
                               分かりやすいかも)
   * \~/cgictrl/usertran.txt : Basic認証等で認識されたユーザに対して許可
                              するトランザクションを定義する。
-  * \~/cgictrl/html/*.html : 画面定義ファイル(MVCのVに相当する部分)。画
+  * \~/cgictrl/html/\*.html : 画面定義ファイル(MVCのVに相当する部分)。画
                             面定義(html)を独立したファイルで定義する事
                             で、画面のデザインとCGIプログラムのロジック
                             とを分離する事ができる。
@@ -176,8 +176,8 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
     **SPADIR** はSPAを格納するディレクトリを示し、このリソースIDに対する
     実体名称は実際にhttpデーモンの権限で書き込み可能なディレクトリであ
-    る必要が有る。ただし、resource.txt中で指定されない場合は 
-    cgictrl_common.rb 中のinitializeメソッドにハードコーディングされた 
+    る必要が有る。ただし、resource.txt中で指定されない場合は
+    cgictrl_common.rb 中のinitializeメソッドにハードコーディングされた
     SPAディレクトリが設定されるので、一時的にSPAの出力先を変更したい等
     の特別な事情がなければ、あえてresource.txt中で指定する必要は無い。
 
@@ -199,11 +199,11 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
   の2種類が指定可能となる予定(?)。
 
-## ~/cgictrl/usertran.txtの設定
+## \~/cgictrl/usertran.txtの設定
 
   書式 : ユーザ名=許可トランザクション(正規表現)
 
-  例 : m-ito=TEST|SAMP_.*
+  例 : m-ito=TEST|SAMP_.\*
 
   httpサーバの認証機能(Basic認証等)により認証されたユーザIDに対して
   許可するトランザクションを登録する。
@@ -213,71 +213,71 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
 ## cgictrl_common.cgiでの各種既定値定義。
 
-  *サイトごとに必ず設定を見直すべき項目
-    -cgictrlが利用するデータディレクトリ。 
+  * サイトごとに必ず設定を見直すべき項目
+    - cgictrlが利用するデータディレクトリ。  
       @cgictrl_data_dir = "/home/_your_own_account_/cgictrl"
-  *サイトの方針により設定を見直すべき項目
-    -https(ssl)通信を強制しない。 
+  * サイトの方針により設定を見直すべき項目
+    - https(ssl)通信を強制しない。  
       @force_https = "n"
-    -[戻る]ボタンで遡ったページからの処理継続を禁止する。 
+    - [戻る]ボタンで遡ったページからの処理継続を禁止する。  
       @backward_deny = "y"
-    -禁止された[戻る]ボタンを利用した場合、画面の遷移を止める。 
+    - 禁止された[戻る]ボタンを利用した場合、画面の遷移を止める。  
       @backward_deny_msg = "Status: 204 No Response\n\n"
-    -nkf変換パラメータ。 
+    - nkf変換パラメータ。  
       @default_nkf_param = "-W -X -Z1 -w"
-    -<form>からの入力データをログファイルに残す。 
+    - \<form\>からの入力データをログファイルに残す。  
       @get_log_input_flag = "y"
-    -stdoutに出力したデータをログファイルに残す。 
+    - stdoutに出力したデータをログファイルに残す。  
       @get_log_send_flag = "y"
-    -トランザクションの実行拒否をログファイルに残す。 
+    - トランザクションの実行拒否をログファイルに残す。  
       @get_log_deny_flag = "y"
-    -トランザクションを中断するエラーメッセージをログファイルに残す。 
+    - トランザクションを中断するエラーメッセージをログファイルに残す。  
       @get_log_error_flag = "y"
-    -排他リトライ時の間隔(秒)。 
+    - 排他リトライ時の間隔(秒)。  
       @lock_sleep_sec = 1
-    -排他リトライの回数。 
+    - 排他リトライの回数。  
       @lock_retry_max = 60
-    -指定時間(秒)より古いSPAファイルを削除対象とする。 
+    - 指定時間(秒)より古いSPAファイルを削除対象とする。  
       @sweep_time_before = 2 * 24 * 60 * 60
-    -umask値 
+    - umask値  
       @umask = 007
-  *既定値のまま運用する事が望ましい項目
+  * 既定値のまま運用する事が望ましい項目
 
-    -トランザクション to プログラム変換テーブルファイル。 
+    - トランザクション to プログラム変換テーブルファイル。  
       @tran2pgm_file = @cgictrl_data_dir + "/" + "tran2pgm.txt"
-    -ユーザ to トランザクション許可ファイル。 
+    - ユーザ to トランザクション許可ファイル。  
       @usertran_file = @cgictrl_data_dir + "/" + "usertran.txt"
-    -排他対象リソース登録ファイル。 
+    - 排他対象リソース登録ファイル。  
       @resource_file = @cgictrl_data_dir + "/" + "resource.txt"
-    -htmlファイル格納ディレクトリ。 
+    - htmlファイル格納ディレクトリ。  
       @html_dir = @cgictrl_data_dir + "/" + "html"
-    -cgictrlシステムエラー画面htmlファイルのID。 
+    - cgictrlシステムエラー画面htmlファイルのID。  
       @error_msg_id = "cgictrl_error"
-    -cgictrlシステムエラー画面htmlファイル中のメッセージ項目名称。 
+    - cgictrlシステムエラー画面htmlファイル中のメッセージ項目名称。  
       @error_msg_string = "error_message"
-    -排他制御用の親ディレクトリ。 
+    - 排他制御用の親ディレクトリ。  
       @lock_parent_dir = @cgictrl_data_dir + "/" + "lock"
-    -排他制御ディレクトリのフォーマット。 
+    - 排他制御ディレクトリのフォーマット。  
       @lock_dir_format = "%s.dir"
-    -排他制御ファイル。 
+    - 排他制御ファイル。  
       @lock_file = "lock.txt"
-    -htmlファイル中の項目開始文字列名称、終了文字列名称。
-      @html_start_param = "START" 
-      @html_end_param = "END"
-    -htmlファイル中の項目開始文字列、終了文字列。 
-      @html_start_default = "@\{" 
-      @html_end_default = "\}@"
-    -htmlファイル中にトランザクションコードを埋め込む際の文字列名称。 
+    - htmlファイル中の項目開始文字列名称、終了文字列名称。  
+      @html_start_param = "START"  
+      @html_end_param = "END"  
+    - htmlファイル中の項目開始文字列、終了文字列。  
+      @html_start_default = "@\{"  
+      @html_end_default = "\}@" 
+    - htmlファイル中にトランザクションコードを埋め込む際の文字列名称。  
       @html_tran_key = "SYS_tran"
-    -htmlファイル中の項目開始文字列、終了文字列の最終的な値の16進文字列。 
-      @start_str_hex = "01" 
-      @end_str_hex = "02"
-    -ログ記録ファイルのリソースID、格納ディレクトリ、ファイル実体。
-      @log_file_res = "LOGFILE" 
-      @log_dir = @cgictrl_data_dir + "/" + "log" 
+    - htmlファイル中の項目開始文字列、終了文字列の最終的な値の16進文字列。  
+      @start_str_hex = "01"  
+      @end_str_hex = "02" 
+    - ログ記録ファイルのリソースID、格納ディレクトリ、ファイル実体。 
+      @log_file_res = "LOGFILE"  
+      @log_dir = @cgictrl_data_dir + "/" + "log"  
       @log_file = @log_dir + "/" + "log.txt"
-    -SPA(Scratch Pad Area)ファイル格納ディレクトリ、リソースID。 
-      @spa_dir_res = "SPADIR" 
+    - SPA(Scratch Pad Area)ファイル格納ディレクトリ、リソースID。  
+      @spa_dir_res = "SPADIR"  
       @spa_dir = @cgictrl_data_dir + "/" + "spa"
 
 ## 起動方法
@@ -294,28 +294,29 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
   通常のhtmlファイルと異なる部分は、
 
-  -httpヘッダーも含めて記述する。 
+  - httpヘッダーも含めて記述する。 
     ex. Content-Type: text/html; charset=utf-8
-  -\<form\>〜\</form\>の間に必ず以下のインプットタグ(セッションID設定用)を記 
+  - \<form\>〜\</form\>の間に必ず以下のインプットタグ(セッションID設定用)を記 
     述する。原則、<input type="hidden" ...>は下記以外に使用しない事を推奨
     する(ページ間で受け渡す必要の有るデータはSPAを利用することで可能)。 
     \<input type="hidden" name="SYS_sessionid" value="@{SYS_sessionid}@"\>
-  -出力時に埋め込む部分は、 
+  - 出力時に埋め込む部分は、 
+```
     @{項目名称}@ 又は @{項目名称=既定値文字列}@
-
+```
     のように記述し、プログラムから out_html メソッドで置き換えて出力する。
     out_htmlメソッドによる置き換えを行わない項目については、前者の指定の
     場合は空文字列に置換され、後者の指定の場合は既定値文字列に置換される。
-  -行頭から始まる **START=文字列**, **END=文字列** の指定により、項目名称の
+  - 行頭から始まる **START=文字列**, **END=文字列** の指定により、項目名称の
     開始文字列と終了文字列を指定する事ができる。通常この指定はhttpヘッダー
     よりも先に指定する事を推奨する。文字列中に正規表現上の特殊文字を含む
     場合は、**\\** によりエスケープする必要がある。未指定時(デフォルト値)は
 
-        *START=@\{
-        *END=\}@
+        * START=@\{
+        * END=\}@
 
     となっている。
-  -START, ENDに指定する文字列は意図せぬ置換を防ぐために、html本文中に現
+  - START, ENDに指定する文字列は意図せぬ置換を防ぐために、html本文中に現
     れてはいけない。しかし、どうしても記述せざるを得ない場合は &#xxx; 等
     の表現(数値文字参照)に置き換えれば記述可能である。
 
@@ -328,22 +329,22 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 ```
   の間にコーディングを行う。
 
-  -sub_open() 
+  - sub_open()  
     プログラムの開始時に必ず実行されるルーチン。各種の初期処理を行う。DBへ
     の接続処理や、独自の排他制御取得処理を想定している。
-  -sub_send() 
+  - sub_send()  
     SPAにより受け渡されたデータを基に画面の編集および出力処理を行う。
     cgictrl.cgiの制御により、下記のsub_receive()と本sub_send()の、どちらか
     一方が呼び出される。次回に起動するトランザクションを戻り値とするが、通
     常は自トランザクションを返す。
-  -sub_receive() 
+  - sub_receive()  
     画面から入力されたデータを受け取り、必要な処理を行う。また、次回に起動
     するトランザクションに引き渡すためのデータをSPAに保存する。SPAに保存す
     る際の項目名には**SYS_**で始まる名称を利用してはいけない(内部での利用のた
     めに予約されている)。 cgictrl.cgiの制御により、上記のsub_send()と本
     sub_receive()の、どちらか一方が呼び出される。処理の結果を判断し、次回に
     起動するトランザクションを戻り値とする。
-  -sub_close() 
+  - sub_close()  
     プログラムの終了時に必ず実行されるルーチン。各種の終了処理を行う。DBか
     らの切断処理や、独自の排他制御解除処理を想定している。
 
@@ -352,80 +353,80 @@ CICSかな?)辺りでのオンラインプログラム構造を思い浮かべ�
 
 ## Cgictrl classに定義されている(主にユーザプログラムで使用する)メソッド
 
-  -start(nkf_param) 
-     クライアント開始処理 
-     引  数：nkf_param ... 入力項目をnkfで変換する際のオプション 
+  - start(nkf_param)  
+     クライアント開始処理  
+     引  数：nkf_param ... 入力項目をnkfで変換する際のオプション  
      戻り値：セッションID
-  -end(tran) 
-     クライアント終了処理 
-     引  数：tran ... 次回に起動するトランザクションを指定 
+  - end(tran)  
+     クライアント終了処理  
+     引  数：tran ... 次回に起動するトランザクションを指定  
      戻り値：無し
-  -is_send() 
-     コントロール条件(送信トランザクション)取得 
-     引  数：無し 
-     戻り値：ステータス ... true  : 送信トランザクションである 
-                            false : 受信トランザクションである 
-  -is_receive() 
-     コントロール条件(受信トランザクション)取得 
-     引  数：無し 
-     戻り値：ステータス ... true  : 受信トランザクションである 
+  - is_send()  
+     コントロール条件(送信トランザクション)取得  
+     引  数：無し  
+     戻り値：ステータス ... true  : 送信トランザクションである  
+                            false : 受信トランザクションである  
+  - is_receive()  
+     コントロール条件(受信トランザクション)取得  
+     引  数：無し  
+     戻り値：ステータス ... true  : 受信トランザクションである  
                             false : 送信トランザクションである 
-  -get_realres(res) 
-     リソース実体取得 
-     引  数：res ... リソースID 
+  - get_realres(res)  
+     リソース実体取得  
+     引  数：res ... リソースID  
      戻り値：リソースの実体を表す文字列 
-  -get_input(key) 
-     インプットデータ取得 
-     引  数：key ... 項目名称 
+  - get_input(key)  
+     インプットデータ取得  
+     引  数：key ... 項目名称  
      戻り値：項目に対する値(数値データも含めて全て文字列として返ります) 
-  -set_input(key, value) 
-     インプットデータ設定 
-     引  数：key ... 項目名称 
-             value ... 項目に対して設定する値 
+  - set_input(key, value)  
+     インプットデータ設定  
+     引  数：key ... 項目名称  
+             value ... 項目に対して設定する値  
      戻り値：無し 
-  -get_input_file(key) 
-     インプットファイルデータ取得 
-     引  数：key ... 項目名称 
+  - get_input_file(key)  
+     インプットファイルデータ取得  
+     引  数：key ... 項目名称  
      戻り値：項目に対する値 
-  -set_input_file(key, value) 
-     インプットファイルデータ設定 
-     引  数：key ... 項目名称 
-             value ... 項目に対して設定する値 
+  - set_input_file(key, value)  
+     インプットファイルデータ設定  
+     引  数：key ... 項目名称  
+             value ... 項目に対して設定する値  
      戻り値：無し 
-  -get_spa(key) 
-     SPAデータ取得 
-     引  数：key ... 項目名称 
+  - get_spa(key)  
+     SPAデータ取得  
+     引  数：key ... 項目名称  
      戻り値：項目に対する値(数値データも含めて全て文字列として返ります) 
-  -set_spa(key, value) 
-     SPAデータ設定 
-     引  数：key ... 項目名称 
-             value ... 項目に対して設定する値 
+  - set_spa(key, value)  
+     SPAデータ設定  
+     引  数：key ... 項目名称  
+             value ... 項目に対して設定する値  
      戻り値：無し 
-  -clear_spa() 
-     SPAクリアー 
-     引  数：無し 
+  - clear_spa()  
+     SPAクリアー  
+     引  数：無し  
      戻り値：無し 
-  -destroy_spa() 
-     SPA完全クリアー 
-     引  数：無し 
-     戻り値：無し 
-  -get_init_tran() 
-     初期トランザクションコードの取得 
-     引  数：無し 
+  - destroy_spa()  
+     SPA完全クリアー  
+     引  数：無し  
+     戻り値：無し  
+  - get_init_tran()  
+     初期トランザクションコードの取得  
+     引  数：無し  
      戻り値：トランザクションコード 
-  -get_tran() 
-     現在トランザクションコードの取得 
-     引  数：無し 
+  - get_tran()  
+     現在トランザクションコードの取得  
+     引  数：無し  
      戻り値：トランザクションコード 
-  -get_prev_tran() 
-     呼出元トランザクションコードの取得 
-     引  数：無し 
+  - get_prev_tran()  
+     呼出元トランザクションコードの取得  
+     引  数：無し  
      戻り値：トランザクションコード 
-  -out_html(id, hash_param) 
-     html出力処理 
-     引  数：id ... htmlファイルID 
-             hash_param ... { 項目 => 値, ...} (htmlに埋め込む値) 
-     戻り値：ステータス ... true  : 成功 
+  - out_html(id, hash_param)  
+     html出力処理  
+     引  数：id ... htmlファイルID  
+             hash_param ... { 項目 => 値, ...} (htmlに埋め込む値)  
+     戻り値：ステータス ... true  : 成功  
                             false : 失敗 
 
        ex. hash_param = { "key" => "value" } の場合
